@@ -10,7 +10,7 @@
     srcset="assets/design/images/banner-safra-readme-light.png"
   />
   <img
-    src="assets/design/images/banner-safra--light.png"
+    src="assets/design/images/banner-safra-readme-light.png"
     alt="Safra Online 2.0"
     width="100%"
   />
