@@ -1,7 +1,7 @@
 # Safra 2.0 — Frontend
 
 <!-- Insira o banner do projeto abaixo -->
-![Banner do Safra 2.0](CAMINHO_DO_SEU_BANNER)
+![Banner do Safra 2.0](assets/design/images/banner-safra-readme-light.png)
 
 Aplicativo de supermercado digital desenvolvido como parte do Projeto Integrador IV, com foco em proporcionar uma experiência de compra moderna, intuitiva e acessível.
 
