@@ -1,4 +1,4 @@
-# Safra 2.0 — Frontend
+# Safra Online
 
 <!-- Insira o banner do projeto abaixo -->
 ![Banner do Safra 2.0](assets/design/images/banner-safra-readme-light.png)
