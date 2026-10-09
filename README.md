@@ -3,11 +3,11 @@
 <picture>
   <source
     media="(prefers-color-scheme: light)"
-    srcset="assets/design/images/banner-safra-dark.png"
+    srcset="assets/design/images/banner-safra-readme-dark.png"
   />
   <source
     media="(prefers-color-scheme: dark)"
-    srcset="assets/design/images/banner-safra-light.png"
+    srcset="assets/design/images/banner-safra-readme-light.png"
   />
   <img
     src="assets/design/images/banner-safra--light.png"
