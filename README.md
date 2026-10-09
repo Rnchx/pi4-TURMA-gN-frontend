@@ -7,13 +7,13 @@ Aplicativo de supermercado digital desenvolvido como parte do Projeto Integrador
 
 ## Sobre o projeto
 
-O **Safra 2.0** é uma evolução do projeto Safra Online, desenvolvido com o objetivo de modernizar a experiência de compras em um supermercado digital.
+O **Safra Online** é uma evolução do projeto Safra Online, desenvolvido com o objetivo de modernizar a experiência de compras em um supermercado digital.
 
 A aplicação permite explorar categorias de produtos, visualizar informações detalhadas, adicionar itens ao carrinho e avançar pelo fluxo de compra. O projeto também prevê a evolução da experiência por meio de funcionalidades como assistência por inteligência artificial e um processo de checkout mais completo.
 
 Este repositório contém o **frontend da aplicação**, desenvolvido com React Native e Expo, responsável pela interface e pela interação com o usuário.
 
-O Safra 2.0 é um projeto acadêmico desenvolvido no contexto do Projeto Integrador IV.
+O Safra Online é um projeto acadêmico desenvolvido no contexto do Projeto Integrador IV.
 
 ## Funcionalidades
 
