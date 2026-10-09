@@ -1,7 +1,20 @@
 # Safra Online
 
-<!-- Insira o banner do projeto abaixo -->
-![Banner do Safra 2.0](assets/design/images/banner-safra-readme-light.png)
+<picture>
+  <source
+    media="(prefers-color-scheme: light)"
+    srcset="assets/design/images/banner-safra-dark.png"
+  />
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="assets/design/images/banner-safra-light.png"
+  />
+  <img
+    src="assets/design/images/banner-safra--light.png"
+    alt="Safra Online 2.0"
+    width="100%"
+  />
+</picture>
 
 Aplicativo de supermercado digital desenvolvido como parte do Projeto Integrador IV, com foco em proporcionar uma experiência de compra moderna, intuitiva e acessível.
 
