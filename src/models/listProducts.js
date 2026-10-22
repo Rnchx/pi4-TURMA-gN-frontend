@@ -7,8 +7,8 @@
 
 //   saveToDatabase(product) {
 //     console.log(product);
-//     // fetch('http://10.88.200.157:4000/products', {
-//       fetch('http://192.168.15.111:4000/products', {
+//     // fetch(`${process.env.EXPO_PUBLIC_API_URL}/products`, {
+//       fetch(`${process.env.EXPO_PUBLIC_API_URL}/products`, {
 //       method: 'POST',
 //       headers: {
 //         'Content-Type': 'application/json'
@@ -34,8 +34,8 @@
 
 
 //   updateInDatabase(name, price, description, type, validity, photo, idCategory) {
-//     // const url = `http://10.88.200.157:4000/products/${id}`;
-//     const url = `http://192.168.15.111:4000/products/${id}`
+//     // const url = `${process.env.EXPO_PUBLIC_API_URL}/products/${id}`;
+//     const url = `${process.env.EXPO_PUBLIC_API_URL}/products/${id}`
 
 //     fetch(url, {
 //       method: 'PUT', 

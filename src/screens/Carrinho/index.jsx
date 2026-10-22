@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import styles from "./styles";
 import { useCart } from "../../components/Cart";
@@ -65,7 +65,7 @@ export default function ShopCart() {
             <View style={styles.containerMessageAddSomethingInCart}>
               <Text style={styles.messageAddSomethingInCart}>Adicione produtos ao carrinho...</Text>
 
-              <Image style={styles.logo} source={require("../../../assets/cart.gif")} />
+              <Image style={styles.logo} source={require("../../../assets/design/images/cart.gif")} />
             </View>
           ) : (
             cart.map((product, index) => (
