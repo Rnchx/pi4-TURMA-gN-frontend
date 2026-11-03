@@ -1,6 +1,6 @@
 import { Image, Text, TouchableOpacity, View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api, { API_ERROR_MESSAGE } from "../../services/api";
 
 import styles from "./styles";
 import { MaterialIcons } from '@expo/vector-icons';
@@ -14,7 +14,7 @@ export default function ProductDetails({ route }) {
   const { id } = route.params;
   const { idcategory } = route.params;
 
-  const { addToCart, getQuantityProducts, verifyExistProductInCart } = useCart();
+  const { addToCart, getQuantityProducts } = useCart();
 
   const navigation = useNavigation();
 
@@ -24,58 +24,43 @@ export default function ProductDetails({ route }) {
   const [loading, setLoading] = useState(true);
   const [quantityProductsInCart, setQuantityProductsInCart] = useState(0);
 
-  const apiURL = `http://10.88.200.157:4000/products/${id}`;
-  const apiURL2 = `http://10.88.200.157:4000/products/idcategory/${idcategory}`;
-  const apiURL3 = "http://10.88.200.157:4000/categorys";
-
-  const fetchProduct = async () => {
-    try {
-      const response = await axios.get(apiURL);
-      setProduct(response.data.product);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchFilterProducts = async () => {
-    try {
-      const response = await axios.get(apiURL2);
-      setfilterProductByidCategory(response.data.product);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCategorie = async () => {
-    try {
-      const response = await axios.get(apiURL3);
-      setCategories(response.data.categorys);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    let active = true;
     setProduct(null);
+    setfilterProductByidCategory([]);
+    setCategories([]);
     setLoading(true);
-    fetchProduct();
-  }, [id]);
+    setError("");
 
-  useEffect(() => {
-    setfilterProductByidCategory(null);
-    setLoading(true);
-    fetchFilterProducts();
-  }, [idcategory]);
-
-  useEffect(() => {
-    setCategories(null);
-    setLoading(true);
-    fetchCategorie();
-  }, []);
+    const loadDetails = async () => {
+      const results = await Promise.allSettled([
+        api.get(`/products/${encodeURIComponent(id)}`),
+        api.get(`/products/idcategory/${encodeURIComponent(idcategory)}`),
+        api.get("/categorys"),
+      ]);
+      if (!active) return;
+      const [productResult, relatedResult, categoriesResult] = results;
+      if (productResult.status === "fulfilled") {
+        setProduct(productResult.value.data?.product || null);
+      }
+      if (relatedResult.status === "fulfilled") {
+        const related = relatedResult.value.data?.product;
+        setfilterProductByidCategory(Array.isArray(related) ? related : []);
+      }
+      if (categoriesResult.status === "fulfilled") {
+        const list = categoriesResult.value.data?.categorys;
+        setCategories(Array.isArray(list) ? list : []);
+      }
+      if (results.some(result => result.status === "rejected")) {
+        setError(API_ERROR_MESSAGE);
+      }
+      setLoading(false);
+    };
+    loadDetails();
+    return () => { active = false; };
+  }, [id, idcategory]);
 
   useEffect(() => {
     const quantity = getQuantityProducts();
@@ -83,13 +68,15 @@ export default function ProductDetails({ route }) {
   }, [getQuantityProducts]);
 
   const handleAddToCart = () => {
-    // verifyExistProductInCart(product);
     addToCart(product);
   };
 
   return (
     <ScrollView>
       <View style={styles.container}>
+        {error ? (
+          <Text accessibilityRole="alert" style={styles.loading}>{error}</Text>
+        ) : null}
         <View style={styles.containerImageCirculoAzul}>
           <View style={styles.containerButtonBack}>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Home")}>
@@ -102,7 +89,7 @@ export default function ProductDetails({ route }) {
               <Image style={styles.logo} source={{ uri: product.photo }} />
             </View>
           ) : (
-            <Text style={styles.loading}>Carregando...</Text>
+            <Text style={styles.loading}>{loading ? "Carregando..." : "Produto indisponível."}</Text>
           )}
         </View>
 
@@ -136,7 +123,7 @@ export default function ProductDetails({ route }) {
             </View>
           </View>
         ) : (
-          <Text style={styles.loading}>Carregando...</Text>
+          <Text style={styles.loading}>{loading ? "Carregando..." : "Produto indisponível."}</Text>
         )}
 
         <View style={styles.containerCards}>
@@ -154,7 +141,7 @@ export default function ProductDetails({ route }) {
                 ))}
             </View>
           ) : (
-            <Text style={styles.loading}>Carregando...</Text>
+            <Text style={styles.loading}>{loading ? "Carregando..." : "Produto indisponível."}</Text>
           )}
           {filterProductByidCategory ? (
             <View style={styles.containerProducts}>
@@ -178,7 +165,7 @@ export default function ProductDetails({ route }) {
               </ScrollView>
             </View>
           ) : (
-            <Text style={styles.loading}>Carregando...</Text>
+            <Text style={styles.loading}>{loading ? "Carregando..." : "Produto indisponível."}</Text>
           )}
         </View>
       </View>

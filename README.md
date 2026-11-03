@@ -89,22 +89,22 @@ cd pi4-TURMA-gN-frontend
 ### 2. Instalar as dependências
 
 ```bash
-npm install
+npm ci
 ```
 
 ### 3. Configurar as variáveis de ambiente
 
-Caso o projeto utilize variáveis de ambiente, crie um arquivo `.env` na raiz conforme as configurações esperadas pela aplicação.
+Copie `.env.example` para `.env` na raiz e ajuste `EXPO_PUBLIC_API_URL` para o endereço HTTP ou HTTPS do backend (sem barra final). O arquivo `.env` é local e ignorado pelo Git.
 
 Exemplo ilustrativo:
 
 ```env
-EXPO_PUBLIC_API_URL=http://SEU_IP_LOCAL:PORTA
+EXPO_PUBLIC_API_URL=http://192.168.1.100:4000
 ```
 
 Substitua o endereço pelo endereço acessível do backend. Para testes em um dispositivo físico, normalmente será necessário utilizar o IP local do computador em vez de `localhost`.
 
-Não inclua senhas, tokens privados ou outras credenciais sensíveis no repositório.
+Reinicie o Expo após alterar a variável. Variáveis `EXPO_PUBLIC_` ficam visíveis no aplicativo: não inclua senhas, tokens ou outras credenciais. Sem configuração válida ou com o servidor indisponível, as telas exibem uma mensagem e não criam produtos locais. As chamadas têm limite de 10 segundos.
 
 ### 4. Iniciar a aplicação
 
@@ -114,7 +114,24 @@ npx expo start
 
 Após iniciar, utilize o QR Code ou as opções do Expo para abrir a aplicação em um dispositivo compatível ou em um emulador configurado.
 
-> Os comandos e as variáveis de ambiente podem precisar de ajustes de acordo com a configuração atual do repositório.
+Para iniciar a versão web:
+
+```bash
+npx expo start --web
+```
+
+O projeto permanece no **Expo SDK 51**. No dispositivo, use um Expo Go compatível com esse SDK ou um build de desenvolvimento compatível. No Android Emulator, o endereço do computador normalmente é `http://10.0.2.2:4000`; no navegador do próprio computador, pode ser `http://localhost:4000`. O backend deve permitir a origem web (CORS).
+
+Para validar a instalação e os bundles:
+
+```bash
+npm ci
+npx expo-doctor
+npx expo export --platform android
+npx expo export --platform web
+```
+
+As exportações ficam em `dist/`, ignorado pelo Git. As rotas existentes, incluindo `categorys`, foram mantidas.
 
 ## Estrutura do projeto
 

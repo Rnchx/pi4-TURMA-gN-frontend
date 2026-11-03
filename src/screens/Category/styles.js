@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-import { HoverEffect } from "react-native-gesture-handler";
 
 const styles = StyleSheet.create({
   container: {
