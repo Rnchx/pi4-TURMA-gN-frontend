@@ -1,4 +1,7 @@
-// import { View, Image, Text, TextInput, TouchableOpacity } from "react-native";
+import { View } from "react-native";
+import styles from "./styles";
+
+// import { Image, Text, TextInput, TouchableOpacity } from "react-native";
 // import { AntDesign } from '@expo/vector-icons';
 // import { MaterialIcons } from '@expo/vector-icons';
 // import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -39,11 +42,11 @@ export default function Register({ route }) {
   // const [categorys, setCategories] = useState([]);
   // const [deuBom, setDeuBom] = useState(false);
 
-  // const apiURL = "http://http://192.168.15.111:4000/products";
-  // const apiUrl2 = "http://http://192.168.15.111:4000/categorys";
+  // const apiURL = `${process.env.EXPO_PUBLIC_API_URL}/products`;
+  // const apiUrl2 = `${process.env.EXPO_PUBLIC_API_URL}/categorys`;
 
-  // // const apiURL = "http://10.88.200.157:4000/products";
-  // // const apiUrl2 = "http://10.88.200.157:4000/categorys";
+  // // const apiURL = `${process.env.EXPO_PUBLIC_API_URL}/products`;
+  // // const apiUrl2 = `${process.env.EXPO_PUBLIC_API_URL}/categorys`;
 
 
   // const fetchProduct = async () => {
@@ -158,7 +161,7 @@ export default function Register({ route }) {
   return (
     <View style={styles.container}>
 
-      {/* <Image style={styles.cimaOnda} source={require('../../../assets/em_cima_onda3.png')}></Image>
+      {/* <Image style={styles.cimaOnda} source={require('../../../assets/design/images/em_cima_onda3.png')}></Image>
       <Text style={styles.title}>Cadastro</Text>
 
       <View style={styles.input}>
@@ -251,7 +254,7 @@ export default function Register({ route }) {
           <Text>Cancelar Edição</Text>
         </TouchableOpacity>
       )}
-      <Image style={styles.baixoOnda} source={require('../../../assets/embaixo_onda2.png')}></Image> */}
+      <Image style={styles.baixoOnda} source={require('../../../assets/design/images/embaixo_onda2.png')}></Image> */}
 
     </View>
   );

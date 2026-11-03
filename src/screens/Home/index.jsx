@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
-import { Text, View, Image, TouchableOpacity, ScrollView, TextInput } from "react-native";
+import { Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import axios from "axios";
+import api, { API_ERROR_MESSAGE } from "../../services/api";
 
 import styles from "./styles";
 import { FontAwesome } from '@expo/vector-icons';
-import { FontAwesome6 } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
 
 export default function Home() {
 
@@ -24,22 +22,8 @@ export default function Home() {
   const [filterBebidas, setFilterBebidas] = useState([]);
   const [filterLimpeza, setFilterLimpeza] = useState([]);
 
-  // const apiURL = "http://10.88.194.76:4000/products";
-  // const apiUrl2 = "http://10.88.194.76:4000/categorys";
-
-  // const apiURL = "http://10.88.200.157:4000/products";
-  // const apiUrl2 = "http://10.88.200.157:4000/categorys";
-
-  // const apiURLPadaria = `http://10.88.200.157:4000/categorys/filter/Padaria`
-  // const apiURLLimpeza = `http://10.88.200.157:4000/categorys/filter/Limpeza`
-
-  const apiURL = "http://10.88.200.157:4000/products";
-  const apiUrl2 = "http://10.88.200.157:4000/categorys"
-  const apiURLPadaria = "http://10.88.200.157:4000/categorys/filter/Padaria"
-  const apiURLAcougue = "http://10.88.200.157:4000/categorys/filter/Acougue"
-  const apiURLHortiFruit = "http://10.88.200.157:4000/categorys/filter/Horti-Fruit"
-  const apiURLBebidas = "http://10.88.200.157:4000/categorys/filter/Bebidas"
-  const apiURLLimpeza = "http://10.88.200.157:4000/categorys/filter/Limpeza"
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const getIcon = (categoryName) => {
     switch (categoryName) {
@@ -60,95 +44,79 @@ export default function Home() {
 
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(apiURL);
-      setProducts(response.data.products);
-    } catch (error) {
-      console.error(error);
+      const response = await api.get("/products");
+      setProducts(Array.isArray(response.data?.products) ? response.data.products : []);
+    } catch {
+      setError(API_ERROR_MESSAGE);
     }
   };
 
   const fetchCategorie = async () => {
     try {
-      const response = await axios.get(apiUrl2);
-      setCategories(response.data.categorys);
-    } catch (error) {
-      console.error(error);
+      const response = await api.get("/categorys");
+      setCategories(Array.isArray(response.data?.categorys) ? response.data.categorys : []);
+    } catch {
+      setError(API_ERROR_MESSAGE);
     }
   };
 
   const fetchPadariaFilter = async () => {
     try {
-      const response = await axios.get(apiURLPadaria);
-      setFilterPadaria(response.data.products);
-    } catch (error) {
-      console.error(error);
+      const response = await api.get("/categorys/filter/Padaria");
+      setFilterPadaria(Array.isArray(response.data?.products) ? response.data.products : []);
+    } catch {
+      setError(API_ERROR_MESSAGE);
     }
   };
 
   const fetchAcougueFilter = async () => {
     try {
-      const response = await axios.get(apiURLAcougue);
-      setFilterAcougue(response.data.products);
-    } catch (error) {
-      console.error(error);
+      const response = await api.get("/categorys/filter/Acougue");
+      setFilterAcougue(Array.isArray(response.data?.products) ? response.data.products : []);
+    } catch {
+      setError(API_ERROR_MESSAGE);
     }
   };
 
   const fetchHortiFruitFilter = async () => {
     try {
-      const response = await axios.get(apiURLHortiFruit);
-      setFilterHortiFruit(response.data.products);
-    } catch (error) {
-      console.error(error);
+      const response = await api.get("/categorys/filter/Horti-Fruit");
+      setFilterHortiFruit(Array.isArray(response.data?.products) ? response.data.products : []);
+    } catch {
+      setError(API_ERROR_MESSAGE);
     }
   };
 
   const fetchBebidasFilter = async () => {
     try {
-      const response = await axios.get(apiURLBebidas);
-      setFilterBebidas(response.data.products);
-    } catch (error) {
-      console.error(error);
+      const response = await api.get("/categorys/filter/Bebidas");
+      setFilterBebidas(Array.isArray(response.data?.products) ? response.data.products : []);
+    } catch {
+      setError(API_ERROR_MESSAGE);
     }
   };
 
   const fetchLimpezaFilter = async () => {
     try {
-      const response = await axios.get(apiURLLimpeza);
-      setFilterLimpeza(response.data.products);
-    } catch (error) {
-      console.error(error);
+      const response = await api.get("/categorys/filter/Limpeza");
+      setFilterLimpeza(Array.isArray(response.data?.products) ? response.data.products : []);
+    } catch {
+      setError(API_ERROR_MESSAGE);
     }
   };
 
 
 
   useEffect(() => {
-    fetchProduct();
-  }, []);
-
-  useEffect(() => {
-    fetchCategorie();
-  }, []);
-
-  useEffect(() => {
-    fetchPadariaFilter();
-  }, []);
-
-  useEffect(() => {
-    fetchAcougueFilter();
-  }, []);
-
-  useEffect(() => {
-    fetchHortiFruitFilter();
-  }, []);
-
-  useEffect(() => {
-    fetchBebidasFilter();
-  }, []);
-
-  useEffect(() => {
-    fetchLimpezaFilter();
+    Promise.all([
+      fetchProduct(),
+      fetchCategorie(),
+      fetchPadariaFilter(),
+      fetchAcougueFilter(),
+      fetchHortiFruitFilter(),
+      fetchBebidasFilter(),
+      fetchLimpezaFilter(),
+    ]).finally(() => setLoading(false));
   }, []);
 
   return (
@@ -157,10 +125,18 @@ export default function Home() {
         <View style={styles.viewSearchLogo}>
           <View style={styles.viewLogo}>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Home")}>
-              <Image style={styles.logo} source={require("../../../assets/logo.png")} />
+              <Image style={styles.logo} source={require("../../../assets/design/images/logo.png")} />
             </TouchableOpacity>
           </View>
         </View>
+
+        {error ? (
+          <Text accessibilityRole="alert" style={styles.loading}>{error}</Text>
+        ) : loading ? (
+          <Text style={styles.loading}>Carregando...</Text>
+        ) : products.length === 0 && categories.length === 0 ? (
+          <Text style={styles.loading}>Nenhum produto disponível no momento.</Text>
+        ) : null}
 
         <View style={styles.containerCategorys}>
           <ScrollView showsHorizontalScrollIndicator={false} horizontal>

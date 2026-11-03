@@ -1,7 +1,7 @@
 import { View, TouchableOpacity, Text, Image } from "react-native";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
+import api, { API_ERROR_MESSAGE } from "../../services/api";
 import styles from "./styles";
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
@@ -12,62 +12,67 @@ export default function CategoryProducts({ route }) {
   const navigation = useNavigation();
 
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(null);
   const [filterProductsType, setFilterProductsType] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedType, setSelectedType] = useState(null);
 
-  const apiURL2 = `http://10.88.200.157:4000/categorys/${id}`;
-  const apiURLFilterCategoryProducts = `http://10.88.200.157:4000/categorys/filter/${name}`;
-  const apiURLFilterProductsType = `http://10.88.200.157:4000/products/type/`;
-
-  const fetchCategorie = async () => {
-    try {
-      const response = await axios.get(apiURL2);
-      setCategories(response.data.category);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCategoryFilter = async () => {
-    try {
-      const response = await axios.get(apiURLFilterCategoryProducts);
-      setProducts(response.data.products || []);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchFilterProductsType = async (type) => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${apiURLFilterProductsType}${type}`);
-      setFilterProductsType(response.data.product || []);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [error, setError] = useState("");
+  const [filterError, setFilterError] = useState("");
+  const [filterLoading, setFilterLoading] = useState(false);
 
   useEffect(() => {
+    let active = true;
     setLoading(true);
-    fetchCategorie();
-    fetchCategoryFilter();
+    setError("");
+    setProducts([]);
+    setCategories(null);
     setSelectedType(null);
-  }, [id]);
+
+    const loadCategory = async () => {
+      try {
+        const [categoryResponse, productsResponse] = await Promise.all([
+          api.get(`/categorys/${encodeURIComponent(id)}`),
+          api.get(`/categorys/filter/${encodeURIComponent(name)}`),
+        ]);
+        if (active) {
+          setCategories(categoryResponse.data?.category || null);
+          setProducts(Array.isArray(productsResponse.data?.products) ? productsResponse.data.products : []);
+        }
+      } catch {
+        if (active) setError(API_ERROR_MESSAGE);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    loadCategory();
+    return () => { active = false; };
+  }, [id, name]);
 
   useEffect(() => {
-    if (selectedType) {
-      fetchFilterProductsType(selectedType);
-    } else {
-      setFilterProductsType([]);
+    let active = true;
+    setFilterProductsType([]);
+    setFilterError("");
+    if (!selectedType) {
+      setFilterLoading(false);
+      return;
     }
+
+    setFilterLoading(true);
+    const loadType = async () => {
+      try {
+        const response = await api.get(`/products/type/${encodeURIComponent(selectedType)}`);
+        if (active) {
+          setFilterProductsType(Array.isArray(response.data?.product) ? response.data.product : []);
+        }
+      } catch {
+        if (active) setFilterError(API_ERROR_MESSAGE);
+      } finally {
+        if (active) setFilterLoading(false);
+      }
+    };
+    loadType();
+    return () => { active = false; };
   }, [selectedType]);
 
   const getUniqueTypes = (products) => {
@@ -85,9 +90,13 @@ export default function CategoryProducts({ route }) {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Home")}>
-          <Image style={styles.logo} source={require("../../../assets/logo.png")} />
+          <Image style={styles.logo} source={require("../../../assets/design/images/logo.png")} />
         </TouchableOpacity>
       </View>
+
+      {error || filterError ? (
+        <Text accessibilityRole="alert" style={styles.loading}>{error || filterError}</Text>
+      ) : null}
 
       <View style={styles.containerCategorys}>
         {categories ? (
@@ -97,7 +106,7 @@ export default function CategoryProducts({ route }) {
             </View>
           </View>
         ) : (
-          <Text style={styles.loading}>Carregando Setor</Text>
+          <Text style={styles.loading}>{loading ? "Carregando setor..." : "Setor indisponível."}</Text>
         )}
       </View>
 
@@ -128,15 +137,17 @@ export default function CategoryProducts({ route }) {
               ))}
             </View>
           ) : (
-            <Text style={styles.loading}>Carregando...</Text>
+            <Text style={styles.loading}>{loading ? "Carregando..." : "Nenhum produto disponível."}</Text>
           )}
         </View>
       </ScrollView>
 
       <ScrollView style={styles.containerScrollView}>
         <View style={styles.containerProductsCategory}>
-          {loading ? (
+          {loading || filterLoading ? (
             <Text style={styles.loading}>Carregando...</Text>
+          ) : (selectedType ? filterProductsType : products).length === 0 ? (
+            <Text style={styles.loading}>Nenhum produto disponível.</Text>
           ) : (
             <View style={styles.viewProductDestaques}>
               {(selectedType ? filterProductsType : products).map((product) => (
