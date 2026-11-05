@@ -26,6 +26,10 @@
     "web": {
       "favicon": "./assets/design/images/icone-app-safra-online.png",
       "bundler": "metro"
-    }
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-font"
+    ]
   }
 }
