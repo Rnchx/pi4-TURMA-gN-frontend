@@ -6,11 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/design/images/icone-app-safra-online.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/design/images/tela-splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0B2852"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -26,6 +21,19 @@
     "web": {
       "favicon": "./assets/design/images/icone-app-safra-online.png",
       "bundler": "metro"
-    }
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-font",
+      "expo-status-bar",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/design/images/tela-splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#0B2852"
+        }
+      ]
+    ]
   }
 }

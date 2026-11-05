@@ -44,14 +44,6 @@ const DrawerRoutes = () => {
         options={{
           drawerItemStyle: { display: "none" },
           headerTitle: "",
-          drawerBarIcon: ({ focused }) => (
-            <Feather
-              name="user"
-              size={24}
-              color={focused ? "#131313" : "#D6D6D6"}
-            />
-          ),
-          drawerBarLabel: "Perfil",
           drawerActiveTintColor: "white",
           drawerInactiveTintColor: "gray",
           drawerActiveBackgroundColor: "#F58614",
@@ -120,8 +112,6 @@ const DrawerRoutes = () => {
           ),
           headerStyle: { backgroundColor: "#10377B" },
           drawerLabel: "Cadastro de Produtos",
-          drawerBarActiveTintColor: "#103778",
-          drawerBarInactiveTintColor: "gray",
         }}
       />
 
