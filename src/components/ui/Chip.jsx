@@ -1,7 +1,7 @@
 import { StyleSheet, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./PressableScale";
-import { colors, motion, radius, spacing } from "../../theme";
+import { font, colors, motion, radius, spacing } from "../../theme";
 
 export default function Chip({ label, selected = false, onPress, icon }) {
   return (
@@ -31,5 +31,5 @@ const styles = StyleSheet.create({
     minHeight: 40, flexDirection: "row", alignItems: "center", gap: spacing.xxs,
     paddingHorizontal: spacing.md, borderRadius: radius.pill, borderWidth: 1.5,
   },
-  label: { fontSize: 14, fontWeight: "600" },
+  label: { fontSize: 14, fontFamily: font.semibold },
 });

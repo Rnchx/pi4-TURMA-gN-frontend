@@ -9,7 +9,7 @@ import StateView from "../components/ui/StateView";
 import { ListSkeleton } from "../components/ui/Skeleton";
 import { useCart } from "../state/CartContext";
 import { money } from "../utils/format";
-import { colors, motion, radius, shadow, spacing, type } from "../theme";
+import { font, colors, motion, radius, shadow, spacing, type } from "../theme";
 
 // E8 resumo (CT14) e E9 confirmação demonstrativa (CT15). Os valores exibidos são os mesmos enviados à confirmação.
 export default function Summary({ navigation }) {
@@ -128,6 +128,7 @@ export default function Summary({ navigation }) {
         <Button
           title={confirmError ? "Tentar confirmar novamente" : "Confirmar compra demonstrativa"}
           icon="check-decagram"
+          variant="accent"
           onPress={submit}
           loading={confirming}
           disabled={!podeConfirmar}
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   card: { backgroundColor: colors.surface, borderRadius: radius.xl, padding: spacing.md, gap: spacing.sm, ...shadow.card },
   line: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.border },
-  subtotal: { fontSize: 16, fontWeight: "800", color: colors.ink },
+  subtotal: { fontSize: 16, fontFamily: font.bold, color: colors.ink },
   totalRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: spacing.xs },
   total: { ...type.display, color: colors.primaryDark },
   notice: { flexDirection: "row", gap: spacing.xs, alignItems: "flex-start", padding: spacing.md, backgroundColor: colors.primarySoft, borderRadius: radius.lg },

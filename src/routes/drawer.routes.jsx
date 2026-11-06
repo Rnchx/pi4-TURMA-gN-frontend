@@ -6,7 +6,7 @@ import CartButton, { BadgeCount } from "../components/CartButton";
 import HeaderBack from "../components/HeaderBack";
 import DrawerContent from "./DrawerContent";
 import { useCart } from "../state/CartContext";
-import { colors, radius } from "../theme";
+import { font, colors, radius } from "../theme";
 
 import Home from "../screens/Home";
 import CategoryProducts from "../screens/CategoryProducts";
@@ -36,16 +36,16 @@ export default function DrawerRoutes() {
         headerShown: true,
         headerStyle: { backgroundColor: colors.primary },
         headerTintColor: colors.onPrimary,
-        headerTitleStyle: { fontWeight: "700", fontSize: 18 },
+        headerTitleStyle: { fontFamily: font.semibold, fontSize: 19 },
         headerShadowVisible: false,
         headerRight: () => <CartButton />,
         drawerType: "front",
         drawerStyle: { backgroundColor: colors.background, width: 290 },
         overlayColor: colors.overlay,
         drawerActiveBackgroundColor: colors.primarySoft,
-        drawerActiveTintColor: colors.primaryDark,
+        drawerActiveTintColor: colors.primary,
         drawerInactiveTintColor: colors.ink,
-        drawerLabelStyle: { fontSize: 16, fontWeight: "600" },
+        drawerLabelStyle: { fontSize: 16, fontFamily: font.semibold },
         drawerItemStyle: { borderRadius: radius.md },
         sceneStyle: { backgroundColor: colors.background },
       }}
@@ -84,5 +84,5 @@ export default function DrawerRoutes() {
 
 const styles = StyleSheet.create({
   label: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
-  labelText: { fontSize: 16, fontWeight: "600" },
+  labelText: { fontSize: 16, fontFamily: font.semibold },
 });

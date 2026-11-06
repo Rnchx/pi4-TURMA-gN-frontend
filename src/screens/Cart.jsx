@@ -15,7 +15,7 @@ import { useToast } from "../components/ui/Toast";
 import { useCart } from "../state/CartContext";
 import { cachedProduct } from "../state/productCache";
 import { items as itemsLabel, money } from "../utils/format";
-import { colors, motion, radius, shadow, spacing, type } from "../theme";
+import { font, colors, motion, radius, shadow, spacing, type } from "../theme";
 
 // E4–E7: consulta (CT11), quantidade (CT12), remoção (CT13), subtotais e total calculados pela API.
 export default function Cart({ navigation }) {
@@ -72,7 +72,7 @@ export default function Cart({ navigation }) {
     return (
       <View style={[styles.screen, styles.center]}>
         <StateView
-          icon="cart-outline"
+          tone="brand"
           title="Seu carrinho está vazio"
           message="Escolha produtos no catálogo para montar sua compra."
           actionLabel="Ver produtos"
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   itemTop: { flexDirection: "row", alignItems: "flex-start", gap: spacing.xxs },
   remove: { width: 44, height: 44, alignItems: "center", justifyContent: "center", marginTop: -10, marginRight: -8 },
   itemBottom: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: spacing.xs, marginTop: spacing.xxs },
-  subtotal: { fontSize: 17, fontWeight: "800", color: colors.primaryDark },
+  subtotal: { fontSize: 17, fontFamily: font.bold, color: colors.primaryDark },
   bar: {
     position: "absolute", left: 0, right: 0, bottom: 0, gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.md,
     backgroundColor: colors.surface, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, ...shadow.bar,

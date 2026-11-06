@@ -1,21 +1,29 @@
 import { useCallback, useEffect, useState } from "react";
-import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import { FlatList, Image, RefreshControl, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import Animated, { useReducedMotion } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ProductCard from "../components/ProductCard";
 import PressableScale from "../components/ui/PressableScale";
 import StateView from "../components/ui/StateView";
+import SectionTitle from "../components/ui/SectionTitle";
+import BrandMark from "../components/brand/BrandMark";
+import { SpeedLines, Wheel, enter, rise } from "../components/brand/Motion";
 import { ProductGridSkeleton, Skeleton } from "../components/ui/Skeleton";
 import { useToast } from "../components/ui/Toast";
 import { categoryIcon, categoryLabel } from "../components/categoryIcon";
 import { catalogApi } from "../services/api";
 import { rememberProducts } from "../state/productCache";
 import { padGrid } from "../utils/grid";
-import { colors, motion, radius, shadow, spacing, type } from "../theme";
+import { font, colors, radius, spacing, type } from "../theme";
+
+const WAVE = require("../../assets/brand/onda.png");
+const WAVE_RATIO = 0.16; // altura da onda em relação à largura da tela (achatada para não roubar espaço)
 
 // E1 catálogo (CT1) e E2 categorias (CT3): tudo vem da API SAFRA.
 export default function Home({ navigation }) {
   const toast = useToast();
+  const reduced = useReducedMotion();
+  const { width } = useWindowDimensions();
   const [state, setState] = useState({ status: "loading", products: [], categories: [], error: null });
   const [refreshing, setRefreshing] = useState(false);
 
@@ -49,24 +57,35 @@ export default function Home({ navigation }) {
 
   const header = (
     <View style={styles.header}>
-      <Animated.View entering={FadeInDown.duration(motion.enter).easing(motion.easeOut)} style={styles.hero}>
-        <MaterialCommunityIcons name="leaf" size={120} color={colors.primaryPressed} style={styles.heroLeaf} />
-        <Text style={styles.heroKicker}>Do campo para a sua mesa</Text>
-        <Text style={styles.heroTitle}>Compras fresquinhas, sem sair de casa</Text>
-        <Text style={styles.heroText}>Monte o carrinho e finalize uma compra demonstrativa, sem cobrança.</Text>
-      </Animated.View>
+      {/* Faixa azul que continua o cabeçalho e termina na onda com contorno laranja da marca. */}
+      <View style={styles.hero}>
+        <View style={styles.heroBody}>
+          <View style={styles.heroText}>
+            <Animated.Text style={[styles.heroKicker, rise({ reduced, delay: 60 })]}>MERCADO ONLINE</Animated.Text>
+            <Animated.Text style={[styles.heroTitle, rise({ reduced, delay: 120 })]}>Suas compras andam até você</Animated.Text>
+            <Animated.Text style={[styles.heroSub, rise({ reduced, delay: 180 })]}>
+              Monte o carrinho e finalize uma compra demonstrativa, sem cobrança.
+            </Animated.Text>
+          </View>
+          <View style={styles.heroMark}>
+            <SpeedLines width={44} delay={260} duration={520} style={styles.heroLines} />
+            <Animated.View style={enter({ reduced, delay: 200, distance: 28, duration: 520 })}>
+              <BrandMark size={52} renderWheel={(style, index) => <Wheel style={style} delay={640 + index * 70} />} />
+            </Animated.View>
+          </View>
+        </View>
+        <Image source={WAVE} style={[styles.wave, { height: Math.round(width * WAVE_RATIO) }]} resizeMode="stretch" accessibilityIgnoresInvertColors />
+      </View>
 
-      {state.status === "loading" || state.categories.length ? (
-        <Text style={[type.heading, styles.sectionTitle]} accessibilityRole="header">Categorias</Text>
-      ) : null}
+      {state.status === "loading" || state.categories.length ? <SectionTitle title="Categorias" style={styles.section} /> : null}
       {state.status === "loading" && !state.categories.length ? (
         <View style={styles.categories}>
           {[0, 1, 2].map((key) => <Skeleton key={key} width="31%" height={92} rounded={radius.lg} />)}
         </View>
       ) : (
-        <Animated.View entering={FadeInDown.duration(motion.enter).easing(motion.easeOut)} style={styles.categories}>
-          {state.categories.map((category) => (
-            <View key={category.categoriaId} style={styles.categoryCell}>
+        <View style={styles.categories}>
+          {state.categories.map((category, index) => (
+            <Animated.View key={category.categoriaId} style={[styles.categoryCell, enter({ reduced, delay: 80 + index * 40, distance: 16 })]}>
               <PressableScale
                 onPress={() => openCategory(category)}
                 accessibilityRole="button"
@@ -78,15 +97,16 @@ export default function Home({ navigation }) {
                 </View>
                 <Text style={styles.categoryName} maxFontSizeMultiplier={1.3}>{categoryLabel(category.nome)}</Text>
               </PressableScale>
-            </View>
+            </Animated.View>
           ))}
-        </Animated.View>
+        </View>
       )}
 
-      <View style={styles.listTitle}>
-        <Text style={type.heading} accessibilityRole="header">Todos os produtos</Text>
-        {state.status === "ready" ? <Text style={type.small}>{state.products.length} itens</Text> : null}
-      </View>
+      <SectionTitle
+        title="Todos os produtos"
+        aside={state.status === "ready" ? `${state.products.length} itens` : null}
+        style={[styles.section, styles.listTitle]}
+      />
     </View>
   );
 
@@ -126,16 +146,18 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: spacing.xxl, gap: spacing.sm },
-  header: { paddingTop: spacing.md, gap: spacing.sm, marginBottom: spacing.xxs },
-  hero: {
-    marginHorizontal: spacing.md, padding: spacing.lg, borderRadius: radius.xl, backgroundColor: colors.primary,
-    overflow: "hidden", gap: spacing.xs, ...shadow.card,
-  },
-  heroLeaf: { position: "absolute", right: -18, bottom: -26, transform: [{ rotate: "-20deg" }] },
-  heroKicker: { ...type.caption, color: colors.primaryMuted, textTransform: "uppercase" },
-  heroTitle: { ...type.display, color: colors.onPrimary, maxWidth: 300 },
-  heroText: { ...type.small, color: colors.primarySoft, maxWidth: 300 },
-  sectionTitle: { marginHorizontal: spacing.md, marginTop: spacing.xs },
+  header: { gap: spacing.sm, marginBottom: spacing.xxs },
+  hero: {},
+  heroBody: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.xs, backgroundColor: colors.primary },
+  heroText: { flex: 1, gap: spacing.xxs },
+  heroKicker: { ...type.caption, color: colors.accentOnPrimary },
+  heroTitle: { ...type.display, color: colors.onPrimary },
+  heroSub: { ...type.small, color: colors.primaryMuted },
+  heroMark: { flexDirection: "row", alignItems: "center", marginRight: spacing.xxs },
+  heroLines: { marginRight: -2, marginTop: -4 },
+  // Proporção da onda (1000 × 224); o branco sob o contorno é trocado pelo fundo da tela.
+  wave: { width: "100%", marginTop: -1 },
+  section: { marginHorizontal: spacing.md },
   categories: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs, paddingHorizontal: spacing.md },
   categoryCell: { width: "31.5%", flexGrow: 1 },
   category: {
@@ -143,8 +165,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border,
   },
   categoryIcon: { width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center" },
-  categoryName: { fontSize: 13, lineHeight: 17, fontWeight: "700", color: colors.ink, textAlign: "center" },
-  listTitle: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", marginHorizontal: spacing.md, marginTop: spacing.sm },
+  categoryName: { fontSize: 13, lineHeight: 17, fontFamily: font.bold, color: colors.ink, textAlign: "center" },
+  listTitle: { marginTop: spacing.sm },
   row: { gap: spacing.sm, paddingHorizontal: spacing.md },
   flex: { flex: 1 },
 });

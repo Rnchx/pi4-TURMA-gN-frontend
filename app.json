@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/design/images/icone-app-safra-online.png",
     "userInterfaceStyle": "light",
-    "backgroundColor": "#F7F5EF",
+    "backgroundColor": "#F6F4EF",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -16,15 +16,15 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/design/images/monograma-safra-transparente.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
       "favicon": "./assets/design/images/icone-app-safra-online.png",
       "bundler": "metro",
       "name": "SAFRA Online",
-      "themeColor": "#1E6B43",
-      "backgroundColor": "#F7F5EF"
+      "themeColor": "#072858",
+      "backgroundColor": "#F6F4EF"
     },
     "plugins": [
       "expo-asset",
@@ -34,9 +34,9 @@
         "expo-splash-screen",
         {
           "image": "./assets/design/images/icone-app-safra-online.png",
-          "imageWidth": 200,
+          "imageWidth": 150,
           "resizeMode": "contain",
-          "backgroundColor": "#FFFFFF"
+          "backgroundColor": "#072858"
         }
       ]
     ]

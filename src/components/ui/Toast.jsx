@@ -4,12 +4,12 @@ import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./PressableScale";
-import { colors, motion, radius, shadow, spacing } from "../../theme";
+import { font, colors, motion, radius, shadow, spacing } from "../../theme";
 
 const ToastContext = createContext(null);
 
 const tones = {
-  success: { icon: "check-circle", fg: colors.primaryMuted },
+  success: { icon: "check-circle", fg: colors.accent },
   error: { icon: "alert-circle-outline", fg: colors.accent },
 };
 
@@ -75,9 +75,9 @@ const styles = StyleSheet.create({
   toast: {
     width: "100%", maxWidth: 480, flexDirection: "row", alignItems: "center", gap: spacing.sm,
     paddingVertical: spacing.sm, paddingLeft: spacing.md, paddingRight: spacing.xs,
-    backgroundColor: colors.ink, borderRadius: radius.lg, ...shadow.raised,
+    backgroundColor: colors.primary, borderRadius: radius.lg, borderLeftWidth: 4, borderLeftColor: colors.accent, ...shadow.raised,
   },
-  message: { flex: 1, color: colors.onPrimary, fontSize: 15, lineHeight: 21, fontWeight: "600" },
+  message: { flex: 1, color: colors.onPrimary, fontSize: 15, lineHeight: 21, fontFamily: font.semibold },
   action: { minHeight: 44, justifyContent: "center", paddingHorizontal: spacing.sm, borderRadius: radius.md },
-  actionLabel: { color: colors.accent, fontSize: 15, fontWeight: "800" },
+  actionLabel: { color: colors.accentOnPrimary, fontSize: 15, fontFamily: font.bold },
 });

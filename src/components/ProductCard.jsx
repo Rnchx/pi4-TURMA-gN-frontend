@@ -6,7 +6,7 @@ import PressableScale from "./ui/PressableScale";
 import ProductImage from "./ProductImage";
 import { useCart } from "../state/CartContext";
 import { useToast } from "./ui/Toast";
-import { colors, motion, radius, shadow, spacing, type } from "../theme";
+import { font, colors, motion, radius, shadow, spacing, type } from "../theme";
 import { money } from "../utils/format";
 
 // Cartão do catálogo: toque abre os detalhes (CT7); o botão "+" adiciona 1 unidade (CT8).
@@ -59,7 +59,7 @@ export default function ProductCard({ product, onOpen, onAdded, style }) {
           <ActivityIndicator size="small" color={colors.onPrimary} />
         ) : (
           <Animated.View key={added ? "ok" : "plus"} entering={FadeIn.duration(motion.quick)}>
-            <MaterialCommunityIcons name={added ? "check" : "plus"} size={22} color={added ? colors.ink : colors.onPrimary} />
+            <MaterialCommunityIcons name={added ? "check" : "plus"} size={22} color={added ? colors.onAccent : colors.onPrimary} />
           </Animated.View>
         )}
       </PressableScale>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1, gap: spacing.xs, padding: spacing.sm, backgroundColor: colors.surface,
     borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, ...shadow.card,
   },
-  name: { fontSize: 14, lineHeight: 19, fontWeight: "600", color: colors.ink, flexGrow: 1 },
+  name: { fontSize: 14, lineHeight: 19, fontFamily: font.semibold, color: colors.ink, flexGrow: 1 },
   // Reserva o espaço do botão "+" para o preço nunca ficar sob ele.
   price: { paddingRight: 48, minHeight: 44, textAlignVertical: "center", paddingTop: 10 },
   addPosition: { position: "absolute", right: spacing.sm, bottom: spacing.sm },

@@ -1,14 +1,14 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./PressableScale";
-import { colors, radius, spacing } from "../../theme";
+import { font, colors, radius, spacing } from "../../theme";
 
 const variants = {
   primary: { bg: colors.primary, fg: colors.onPrimary, border: colors.primary },
-  accent: { bg: colors.accent, fg: colors.ink, border: colors.accent },
-  secondary: { bg: colors.primarySoft, fg: colors.primaryDark, border: colors.primarySoft },
-  outline: { bg: colors.surface, fg: colors.primaryDark, border: colors.primaryMuted },
-  ghost: { bg: "transparent", fg: colors.primaryDark, border: "transparent" },
+  accent: { bg: colors.accent, fg: colors.onAccent, border: colors.accent },
+  secondary: { bg: colors.primarySoft, fg: colors.primary, border: colors.primarySoft },
+  outline: { bg: colors.surface, fg: colors.primary, border: colors.primaryMuted },
+  ghost: { bg: "transparent", fg: colors.primary, border: "transparent" },
   danger: { bg: colors.danger, fg: colors.onPrimary, border: colors.danger },
 };
 
@@ -51,5 +51,5 @@ const styles = StyleSheet.create({
   lg: { minHeight: 52, paddingVertical: spacing.sm },
   md: { minHeight: 44, paddingVertical: spacing.xs },
   row: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, flexWrap: "wrap" },
-  label: { fontSize: 16, lineHeight: 22, fontWeight: "700", textAlign: "center", flexShrink: 1 },
+  label: { fontSize: 16, lineHeight: 22, fontFamily: font.bold, textAlign: "center", flexShrink: 1 },
 });

@@ -1,21 +1,30 @@
 import { StyleSheet, Text, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { colors, spacing } from "../theme";
+import BrandMark from "./brand/BrandMark";
+import { colors, font } from "../theme";
 
-// Assinatura textual da marca sobre o verde do cabeçalho (o logotipo em imagem é azul e laranja).
-export default function Brand({ light = true }) {
-  const fg = light ? colors.onPrimary : colors.primaryDark;
+// Assinatura horizontal da marca (logo-safra-online-horizontal.png) em versão para o cabeçalho azul:
+// monograma branco com rodas laranja, "safra" em Outfit Bold e "ONLINE" espaçado em laranja.
+export default function Brand({ light = true, size = "md" }) {
+  const big = size === "lg";
   return (
     <View style={styles.row} accessible accessibilityRole="header" accessibilityLabel="SAFRA Online">
-      <MaterialCommunityIcons name="sprout-outline" size={22} color={light ? colors.primaryMuted : colors.primary} />
-      <Text style={[styles.name, { color: fg }]} maxFontSizeMultiplier={1.3}>safra</Text>
-      <Text style={[styles.tag, { color: light ? colors.primaryMuted : colors.accentText }]} maxFontSizeMultiplier={1.3}>ONLINE</Text>
+      <BrandMark size={big ? 26 : 18} tone={light ? "light" : "dark"} />
+      <View>
+        <Text style={[styles.name, big && styles.nameLg, { color: light ? colors.onPrimary : colors.primary }]} maxFontSizeMultiplier={1.2}>
+          safra
+        </Text>
+        <Text style={[styles.tag, big && styles.tagLg, { color: light ? colors.accentOnPrimary : colors.accentText }]} maxFontSizeMultiplier={1.2}>
+          ONLINE
+        </Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: "row", alignItems: "center", gap: spacing.xxs },
-  name: { fontSize: 22, fontWeight: "800", letterSpacing: -0.5 },
-  tag: { fontSize: 11, fontWeight: "700", letterSpacing: 2, marginTop: 4 },
+  row: { flexDirection: "row", alignItems: "center", gap: 8 },
+  name: { fontFamily: font.bold, fontSize: 22, lineHeight: 22, letterSpacing: -0.4 },
+  nameLg: { fontSize: 30, lineHeight: 30 },
+  tag: { fontFamily: font.regular, fontSize: 9, lineHeight: 11, letterSpacing: 4.2, marginTop: 1 },
+  tagLg: { fontSize: 12, lineHeight: 15, letterSpacing: 5.6 },
 });

@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "./Button";
+import BrandMark from "../brand/BrandMark";
 import { colors, motion, radius, spacing, type } from "../../theme";
 
 const tones = {
@@ -9,6 +10,8 @@ const tones = {
   error: { icon: "alert-circle-outline", bg: colors.dangerSoft, fg: colors.danger },
   offline: { icon: "wifi-off", bg: colors.accentSoft, fg: colors.accentText },
   success: { icon: "check-circle", bg: colors.successSoft, fg: colors.success },
+  // Carrinho vazio: o monograma parado, esperando as compras (sem animação em loop).
+  brand: { bg: colors.primarySoft },
 };
 
 // Estados vazio, erro e indisponibilidade com o mesmo desenho em todas as telas.
@@ -22,7 +25,11 @@ export default function StateView({ tone = "empty", icon, title, message, action
       accessibilityLiveRegion="polite"
     >
       <View style={[styles.badge, { backgroundColor: t.bg }]}>
-        <MaterialCommunityIcons name={icon || t.icon} size={34} color={t.fg} />
+        {tone === "brand" ? (
+          <BrandMark size={30} tone="dark" />
+        ) : (
+          <MaterialCommunityIcons name={icon || t.icon} size={34} color={t.fg} />
+        )}
       </View>
       <Text style={[type.heading, styles.center]}>{title}</Text>
       {message ? <Text style={[type.small, styles.center]}>{message}</Text> : null}
@@ -39,7 +46,7 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.md, backgroundColor: colors.surface, borderRadius: radius.xl,
   },
   compact: { paddingVertical: spacing.lg },
-  badge: { width: 72, height: 72, borderRadius: radius.pill, alignItems: "center", justifyContent: "center", marginBottom: spacing.xxs },
+  badge: { width: 80, height: 80, borderRadius: radius.pill, alignItems: "center", justifyContent: "center", marginBottom: spacing.xxs },
   center: { textAlign: "center" },
   action: { alignSelf: "stretch", marginTop: spacing.xs },
 });

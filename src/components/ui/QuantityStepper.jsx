@@ -2,7 +2,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./PressableScale";
-import { colors, motion, radius, spacing } from "../../theme";
+import { font, colors, motion, radius, spacing } from "../../theme";
 
 export const MIN_QUANTITY = 1;
 export const MAX_QUANTITY = 99;
@@ -68,5 +68,5 @@ const styles = StyleSheet.create({
   lg: { width: 46, height: 46 },
   disabled: { backgroundColor: "transparent" },
   value: { minWidth: 40, alignItems: "center", paddingHorizontal: spacing.xxs },
-  number: { fontSize: 17, fontWeight: "800", color: colors.ink },
+  number: { fontSize: 17, fontFamily: font.bold, color: colors.ink },
 });
