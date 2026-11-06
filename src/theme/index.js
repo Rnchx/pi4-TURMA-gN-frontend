@@ -1,4 +1,4 @@
-import { Easing } from 'react-native-reanimated';
+import { Easing, cubicBezier } from 'react-native-reanimated';
 
 // Identidade oficial SAFRA Online (assets/design/images/apresentacao-safra-final.png):
 // Azul Safra #072858, Laranja Safra #F48A0B, branco e o fundo claro da apresentação.
@@ -71,7 +71,9 @@ export const shadow = {
 export const motion = {
   easeOut: Easing.bezier(0.23, 1, 0.32, 1),
   easeInOut: Easing.bezier(0.77, 0, 0.175, 1),
-  easeOutCss: 'cubic-bezier(0.23, 1, 0.32, 1)',
+  // Para animações e transições CSS do Reanimated. No iOS e no Android o texto "cubic-bezier(...)"
+  // não é aceito; o helper cubicBezier() funciona nas três plataformas.
+  easeOutCss: cubicBezier(0.23, 1, 0.32, 1),
   press: 120,
   quick: 180,
   enter: 260,

@@ -19,7 +19,7 @@ const checkPop = {
   animationDuration: 260,
   animationDelay: 620,
   animationFillMode: "both",
-  animationTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)",
+  animationTimingFunction: motion.easeOutCss,
 };
 
 // E9/E10: confirmação demonstrativa devolvida por CT15 (gerada pelo serviço Java em CT16).
