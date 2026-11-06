@@ -12,10 +12,10 @@ Fluxo do E10: catálogo → categoria → detalhes → carrinho → resumo → c
 
 | # | Passo | Esperado | Resultado | Captura |
 |---|---|---|---|---|
-| 1 | Abrir o app | Destaque, 5 categorias em grade e catálogo em 2 colunas, vindos da API | OK; largura do documento = 360 (sem rolagem horizontal) | [01-home](01-home.jpg) |
+| 1 | Abrir o app | Abertura animada da marca, faixa azul com a onda, 5 categorias em grade e catálogo em 2 colunas, vindos da API | OK; largura do documento = 360 (sem rolagem horizontal) | [01-home](01-home.jpg) |
 | 2 | Tocar em "Padaria" e no filtro "Bolos" | Produtos da subcategoria (CT6) | OK; 5 produtos | [02-categoria-filtro](02-categoria-filtro.jpg) |
 | 3 | Abrir "Bolo de Cenoura" | Imagem, classificação, preço, descrição, quantidade e "Adicionar" fixo no rodapé | OK | [03-detalhes](03-detalhes.jpg) |
-| 4 | Adicionar e abrir um produto relacionado | Botão "Adicionado", contador do carrinho e aviso no topo sem cobrir ações | OK | [04-produto-adicionado](04-produto-adicionado.jpg) |
+| 4 | Tocar em "Adicionar" | Botão laranja "Adicionado", carrinho do cabeçalho anda com as linhas de velocidade, contador e aviso no topo sem cobrir ações | OK | [04-produto-adicionado](04-produto-adicionado.jpg) |
 | 5 | Abrir o carrinho | Itens, preço unitário, quantidade, subtotais e total calculados pela API | OK | [05-carrinho](05-carrinho.jpg) |
 | 6 | Aumentar quantidade e tocar em remover | Total atualizado pela API; diálogo de confirmação | OK | [06-remover-item](06-remover-item.jpg) |
 | 7 | "Revisar compra" | Mesmos itens e total do carrinho; aviso de compra demonstrativa | OK | [07-resumo](07-resumo.jpg) |

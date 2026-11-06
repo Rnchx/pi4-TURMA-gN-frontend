@@ -161,9 +161,17 @@ frontend/
 
 ## Sistema visual
 
-- **Identidade:** verde-floresta (`#1E6B43`) como cor principal, fundos naturais (creme `#F7F5EF`) e o laranja da marca (`#F28C1E`) como destaque. Textos com contraste AA; laranja nunca é usado com texto branco.
-- **Componentes:** todos os botões, cards, campos de quantidade, chips, estados (carregando, vazio, erro, sem conexão, sucesso), avisos e diálogos vêm de `src/components/ui`.
-- **Movimento:** resposta ao toque com escala 0,97 em 120 ms (transição CSS do Reanimated 4), entradas com ease-out, carrinho com entrada e saída de itens e contador animado, selo de sucesso na confirmação. Com "Reduzir movimento" ligado no sistema, escalas e deslocamentos são desligados.
+- **Identidade:** segue o manual em `assets/design/images` (`apresentacao-safra-final.png` e `apresentacao-monograma.png`). Azul Safra (`#072858`) como cor principal, Laranja Safra (`#F48A0B`) como destaque, branco e o fundo claro da apresentação (`#F6F4EF`). Tipografia Outfit (`@expo-google-fonts/outfit`). Textos com contraste AA; sobre o laranja o texto é sempre azul, nunca branco.
+- **Elementos da marca:** assinatura horizontal no cabeçalho, monograma "o S que anda" (o "S" sobre duas rodinhas), linhas de velocidade do símbolo, onda azul com contorno laranja e o traço laranja sob os títulos. Os arquivos derivados ficam em `assets/brand` (gerados a partir de `assets/design/images`, sem alterar as cores).
+- **Componentes:** todos os botões, cards, campos de quantidade, chips, estados (carregando, vazio, erro, sem conexão, sucesso), avisos e diálogos vêm de `src/components/ui`; os elementos animados da marca, de `src/components/brand`.
+- **Movimento:** a marca sempre anda para a frente, da esquerda para a direita, como o carrinho do símbolo.
+  - **Abertura:** continua a splash nativa. O ícone dá uma arrancada, as linhas de velocidade entram atrás dele e a assinatura sobe.
+  - **Início:** o monograma chega à faixa azul e as rodinhas assentam.
+  - **Carrinho do cabeçalho:** a cada produto adicionado, o ícone avança com as linhas de velocidade e o contador pulsa.
+  - **Confirmação:** o monograma chega ao selo e o check laranja aparece.
+  - **Toque:** resposta com escala de 0,97 em 120 ms.
+  - **Técnica:** animações CSS do Reanimated 4, só com `transform` e `opacity`, na thread de UI.
+  - **Reduzir movimento:** com a opção ligada no sistema, ficam só os fades, sem deslocamentos nem escalas.
 - **Toque e leitura:** áreas de toque de no mínimo 44 pt, rótulos de acessibilidade em todos os botões de ícone, controle de quantidade ajustável pelo leitor de tela e textos que acompanham o tamanho de fonte do sistema.
 
 ## Fluxo de compra
