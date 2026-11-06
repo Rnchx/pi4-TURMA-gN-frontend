@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "rn-boilerplate",
-    "slug": "rn-boilerplate",
+    "name": "SAFRA Online",
+    "slug": "safra-online",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/design/images/icone-app-safra-online.png",
     "userInterfaceStyle": "light",
+    "backgroundColor": "#F7F5EF",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -20,7 +21,10 @@
     },
     "web": {
       "favicon": "./assets/design/images/icone-app-safra-online.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "name": "SAFRA Online",
+      "themeColor": "#1E6B43",
+      "backgroundColor": "#F7F5EF"
     },
     "plugins": [
       "expo-asset",
@@ -29,9 +33,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/design/images/tela-splash.png",
+          "image": "./assets/design/images/icone-app-safra-online.png",
+          "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#0B2852"
+          "backgroundColor": "#FFFFFF"
         }
       ]
     ]
