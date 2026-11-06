@@ -26,6 +26,25 @@ Fluxo do E10: catálogo → categoria → detalhes → carrinho → resumo → c
 
 Em todas as telas a largura do documento ficou em 360 px e o console do navegador não registrou erros de JavaScript com a API disponível. Com a API desligada, só aparecem as falhas de rede esperadas (`ERR_CONNECTION_REFUSED`).
 
+## Teste físico no iPhone (Expo Go)
+
+Executado em 06/11/2026 por um integrante da equipe, com o Expo Go do SDK 58 na mesma rede Wi-Fi do computador.
+
+**Configuração**
+- Backend: `API_BIND_ADDRESS=0.0.0.0` no `.env` local, com a API recriada por `docker compose up -d --no-deps api`.
+- Frontend: `EXPO_PUBLIC_API_URL=http://<IP-do-computador>:4000` no `.env.local`.
+- Conferência prévia: `/health/ready` respondeu `{"http":"ok","banco":"disponivel"}` pelo IP da rede.
+
+| Etapa | Resultado |
+|---|---|
+| Primeira execução | Falhou: o Metro registrou `Invalid predefined timing function "cubic-bezier(0.23, 1, 0.32, 1)"`. No iOS e no Android, o Reanimated não aceita a curva em texto nas animações CSS. |
+| Correção | A curva passou a usar o helper `cubicBezier(0.23, 1, 0.32, 1)` do Reanimated, aceito nas três plataformas. |
+| Segunda execução | OK. Abertura, início, categorias, detalhes, adicionar ao carrinho, carrinho, resumo e confirmação funcionaram, com as animações da marca. |
+
+Ficaram alguns avisos de desenvolvimento ("Dependencies should only be used on the web"). Eles vêm da biblioteca `react-native-drawer-layout`, usada pelo menu lateral, e não afetam o app.
+
+Depois do teste, volte o backend para `API_BIND_ADDRESS=127.0.0.1` e recrie a API.
+
 ## Como repetir
 
 ```bash
