@@ -56,7 +56,9 @@ export default function Home({ navigation }) {
         <Text style={styles.heroText}>Monte o carrinho e finalize uma compra demonstrativa, sem cobrança.</Text>
       </Animated.View>
 
-      <Text style={[type.heading, styles.sectionTitle]} accessibilityRole="header">Categorias</Text>
+      {state.status === "loading" || state.categories.length ? (
+        <Text style={[type.heading, styles.sectionTitle]} accessibilityRole="header">Categorias</Text>
+      ) : null}
       {state.status === "loading" && !state.categories.length ? (
         <View style={styles.categories}>
           {[0, 1, 2].map((key) => <Skeleton key={key} width="31%" height={92} rounded={radius.lg} />)}
