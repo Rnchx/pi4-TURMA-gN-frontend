@@ -26,6 +26,7 @@ export default function Home({ navigation }) {
   const { width } = useWindowDimensions();
   const [state, setState] = useState({ status: "loading", products: [], categories: [], error: null });
   const [refreshing, setRefreshing] = useState(false);
+  const [offers, setOffers] = useState({ list: [], aviso: "" });
 
   const load = useCallback(async () => {
     setState((prev) => ({ ...prev, status: prev.products.length ? prev.status : "loading", error: null }));
@@ -38,11 +39,22 @@ export default function Home({ navigation }) {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  // Ofertas (CT22) em paralelo: se falharem, a vitrine some e o catálogo continua funcionando.
+  const loadOffers = useCallback(async () => {
+    try {
+      const data = await catalogApi.listOffers();
+      rememberProducts(data.ofertas);
+      setOffers({ list: data.ofertas, aviso: data.aviso });
+    } catch {
+      setOffers({ list: [], aviso: "" });
+    }
+  }, []);
+
+  useEffect(() => { load(); loadOffers(); }, [load, loadOffers]);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await load();
+    await Promise.all([load(), loadOffers()]);
     setRefreshing(false);
   };
 
@@ -101,6 +113,32 @@ export default function Home({ navigation }) {
           ))}
         </View>
       )}
+
+      {offers.list.length ? (
+        <View style={styles.offers}>
+          <View style={[styles.section, styles.offersHead]}>
+            <SectionTitle title="Ofertas" style={styles.flex} />
+            <PressableScale
+              onPress={() => navigation.navigate("Offers")}
+              accessibilityRole="button"
+              accessibilityLabel="Ver todas as ofertas"
+              style={styles.seeAll}
+            >
+              <Text style={styles.seeAllText}>Ver todas</Text>
+              <MaterialCommunityIcons name="chevron-right" size={18} color={colors.primary} />
+            </PressableScale>
+          </View>
+          <Text style={[type.small, styles.section]}>{offers.aviso}</Text>
+          <FlatList
+            horizontal
+            data={offers.list}
+            keyExtractor={(item) => `oferta-${item.produtoId}`}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.offersList}
+            renderItem={({ item }) => <ProductCard product={item} onOpen={openProduct} onAdded={onAdded} style={styles.offerCard} />}
+          />
+        </View>
+      ) : null}
 
       <SectionTitle
         title="Todos os produtos"
@@ -167,6 +205,12 @@ const styles = StyleSheet.create({
   categoryIcon: { width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center" },
   categoryName: { fontSize: 13, lineHeight: 17, fontFamily: font.bold, color: colors.ink, textAlign: "center" },
   listTitle: { marginTop: spacing.sm },
+  offers: { gap: spacing.xs, marginTop: spacing.sm },
+  offersHead: { flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" },
+  seeAll: { flexDirection: "row", alignItems: "center", minHeight: 44, paddingLeft: spacing.sm },
+  seeAllText: { fontSize: 14, fontFamily: font.semibold, color: colors.primary },
+  offersList: { gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
+  offerCard: { width: 158 },
   row: { gap: spacing.sm, paddingHorizontal: spacing.md },
   flex: { flex: 1 },
 });
