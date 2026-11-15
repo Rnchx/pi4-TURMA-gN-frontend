@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ProductCard from "../components/ProductCard";
 import ProductImage from "../components/ProductImage";
+import { OfferBadge, PreviousPrice } from "../components/OfferPrice";
 import Button from "../components/ui/Button";
 import QuantityStepper from "../components/ui/QuantityStepper";
 import StateView from "../components/ui/StateView";
@@ -119,6 +120,7 @@ export default function ProductDetails({ navigation, route }) {
           <Animated.View entering={FadeIn.duration(motion.enter)} style={styles.block}>
             <View style={styles.imageWrap}>
               <ProductImage uri={product.imagemUrl} label={product.nome} rounded={radius.xl} />
+              {product.emOferta ? <OfferBadge style={styles.badge} /> : null}
             </View>
             {state.classification ? (
               <Text style={styles.breadcrumb}>
@@ -126,7 +128,10 @@ export default function ProductDetails({ navigation, route }) {
               </Text>
             ) : null}
             <Text style={type.title} accessibilityRole="header">{product.nome}</Text>
-            <Text style={styles.price}>{money(product.preco)}</Text>
+            <View>
+              <PreviousPrice product={product} size="lg" />
+              <Text style={styles.price}>{money(product.preco)}</Text>
+            </View>
             <View style={styles.descriptionBox}>
               <Text style={type.caption}>DESCRIÇÃO</Text>
               <Text style={type.body}>{product.descricao}</Text>
@@ -176,6 +181,7 @@ const styles = StyleSheet.create({
   content: { padding: spacing.md, gap: spacing.lg },
   block: { gap: spacing.sm },
   imageWrap: { backgroundColor: colors.surface, borderRadius: radius.xl, padding: spacing.sm, ...shadow.card },
+  badge: { position: "absolute", top: spacing.md, left: spacing.md },
   breadcrumb: { ...type.caption, color: colors.primary, textTransform: "uppercase" },
   price: { ...type.display, color: colors.primaryDark },
   descriptionBox: { gap: spacing.xxs, padding: spacing.md, backgroundColor: colors.surface, borderRadius: radius.lg },

@@ -57,7 +57,7 @@ async function call(request) {
 
 const id = (value) => encodeURIComponent(String(value));
 
-// Catálogo (CT1, CT3, CT6, CT7) e complemento de produtos por categoria.
+// Catálogo (CT1, CT3, CT6, CT7, CT22) e complemento de produtos por categoria.
 export const catalogApi = {
   listProducts: () => call(api.get("/produtos")),
   listCategories: () => call(api.get("/categorias")),
@@ -65,6 +65,8 @@ export const catalogApi = {
   productsByClassification: (categoriaId, subcategoriaId) =>
     call(api.get(`/categorias/${id(categoriaId)}/subcategorias/${id(subcategoriaId)}/produtos`)),
   product: (produtoId) => call(api.get(`/produtos/${id(produtoId)}`)),
+  // CT22: ofertas demonstrativas com o aviso que sempre acompanha a lista.
+  listOffers: () => call(api.get("/produtos/ofertas")),
 };
 
 // Carrinho e compra demonstrativa (CT8, CT11, CT12, CT13, CT14 e CT15).

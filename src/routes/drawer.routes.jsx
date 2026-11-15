@@ -14,6 +14,7 @@ import ProductDetails from "../screens/ProductDetails";
 import Cart from "../screens/Cart";
 import Summary from "../screens/Summary";
 import Confirmation from "../screens/Confirmation";
+import Offers from "../screens/Offers";
 
 const Drawer = createDrawerNavigator();
 
@@ -54,6 +55,11 @@ export default function DrawerRoutes() {
         name="Home"
         component={Home}
         options={{ headerTitle: () => <Brand />, title: "Início", drawerLabel: "Início", drawerIcon: icon("home-outline") }}
+      />
+      <Drawer.Screen
+        name="Offers"
+        component={Offers}
+        options={{ title: "Ofertas", drawerLabel: "Ofertas", drawerIcon: icon("tag-outline") }}
       />
       <Drawer.Screen
         name="ShopCart"

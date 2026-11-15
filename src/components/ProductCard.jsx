@@ -4,6 +4,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./ui/PressableScale";
 import ProductImage from "./ProductImage";
+import { OfferBadge, PreviousPrice } from "./OfferPrice";
 import { useCart } from "../state/CartContext";
 import { useToast } from "./ui/Toast";
 import { font, colors, motion, radius, shadow, spacing, type } from "../theme";
@@ -38,12 +39,20 @@ export default function ProductCard({ product, onOpen, onAdded, style }) {
         containerStyle={styles.flex}
         style={styles.card}
         accessibilityRole="button"
-        accessibilityLabel={`${product.nome}, ${money(product.preco)}`}
+        accessibilityLabel={product.emOferta
+          ? `${product.nome}, oferta, de ${money(product.precoAnterior)} por ${money(product.preco)}`
+          : `${product.nome}, ${money(product.preco)}`}
         accessibilityHint="Abre os detalhes do produto"
       >
-        <ProductImage uri={product.imagemUrl} label={product.nome} />
+        <View>
+          <ProductImage uri={product.imagemUrl} label={product.nome} />
+          {product.emOferta ? <OfferBadge style={styles.badge} /> : null}
+        </View>
         <Text style={styles.name} maxFontSizeMultiplier={1.4}>{product.nome}</Text>
-        <Text style={[type.price, styles.price]} maxFontSizeMultiplier={1.4}>{money(product.preco)}</Text>
+        <View style={styles.priceBox}>
+          <PreviousPrice product={product} />
+          <Text style={type.price} maxFontSizeMultiplier={1.4}>{money(product.preco)}</Text>
+        </View>
       </PressableScale>
       <PressableScale
         onPress={add}
@@ -76,7 +85,8 @@ const styles = StyleSheet.create({
   },
   name: { fontSize: 14, lineHeight: 19, fontFamily: font.semibold, color: colors.ink, flexGrow: 1 },
   // Reserva o espaço do botão "+" para o preço nunca ficar sob ele.
-  price: { paddingRight: 48, minHeight: 44, textAlignVertical: "center", paddingTop: 10 },
+  priceBox: { paddingRight: 48, minHeight: 44, justifyContent: "flex-end" },
+  badge: { position: "absolute", top: 0, left: 0 },
   addPosition: { position: "absolute", right: spacing.sm, bottom: spacing.sm },
   add: {
     width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.primary,
