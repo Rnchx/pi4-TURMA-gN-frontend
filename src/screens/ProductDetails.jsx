@@ -136,6 +136,10 @@ export default function ProductDetails({ navigation, route }) {
               <Text style={type.caption}>DESCRIÇÃO</Text>
               <Text style={type.body}>{product.descricao}</Text>
             </View>
+            {product.idadeMinima === 18 ? <View style={styles.ageNotice}>
+              <MaterialCommunityIcons name="alert-circle-outline" size={20} color={colors.danger} />
+              <Text style={[type.small, styles.flex]}>Produto demonstrativo 18+. A idade é calculada pelo servidor a partir da data de nascimento cadastrada.</Text>
+            </View> : null}
             <View style={styles.notice}>
               <MaterialCommunityIcons name="shield-check-outline" size={20} color={colors.primary} />
               <Text style={[type.small, styles.flex]}>Preço confirmado pelo SAFRA ao adicionar. Compra demonstrativa, sem cobrança.</Text>
@@ -186,6 +190,7 @@ const styles = StyleSheet.create({
   price: { ...type.display, color: colors.primaryDark },
   descriptionBox: { gap: spacing.xxs, padding: spacing.md, backgroundColor: colors.surface, borderRadius: radius.lg },
   notice: { flexDirection: "row", gap: spacing.xs, alignItems: "flex-start", padding: spacing.sm, backgroundColor: colors.primarySoft, borderRadius: radius.md },
+  ageNotice: { flexDirection: "row", gap: spacing.xs, alignItems: "flex-start", padding: spacing.sm, backgroundColor: colors.dangerSoft, borderRadius: radius.md },
   flex: { flex: 1 },
   related: { gap: spacing.sm },
   relatedGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },

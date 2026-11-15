@@ -8,6 +8,7 @@ import {
 } from "@expo-google-fonts/outfit";
 import Routes from "./src/routes";
 import { CartProvider } from "./src/state/CartContext";
+import { AuthProvider } from "./src/state/AuthContext";
 import { ToastProvider } from "./src/components/ui/Toast";
 import Intro from "./src/components/brand/Intro";
 import { colors } from "./src/theme";
@@ -33,11 +34,13 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
-        <CartProvider>
-          <ToastProvider>
-            <Routes />
-          </ToastProvider>
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <ToastProvider>
+              <Routes />
+            </ToastProvider>
+          </CartProvider>
+        </AuthProvider>
         {intro ? <Intro onDone={endIntro} /> : null}
       </SafeAreaProvider>
     </GestureHandlerRootView>

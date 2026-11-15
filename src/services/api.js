@@ -12,6 +12,13 @@ const api = axios.create({
   timeout: 10000,
   headers: { Accept: "application/json" },
 });
+let currentAuthToken = null;
+
+export function setAuthToken(token) {
+  currentAuthToken = token || null;
+  if (token) api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  else delete api.defaults.headers.common.Authorization;
+}
 
 // Evita enviar chamadas relativas ao servidor web quando a API não foi configurada.
 api.interceptors.request.use((config) => {
@@ -78,8 +85,25 @@ export const cartApi = {
     call(api.patch(`/carrinhos/${id(carrinhoId)}/itens/${id(produtoId)}`, { quantidade })),
   removeItem: (carrinhoId, produtoId) => call(api.delete(`/carrinhos/${id(carrinhoId)}/itens/${id(produtoId)}`)),
   summary: (carrinhoId) => call(api.get(`/carrinhos/${id(carrinhoId)}/resumo`)),
-  confirm: (carrinhoId, chaveIdempotencia) =>
-    call(api.post(`/carrinhos/${id(carrinhoId)}/confirmacao-demonstrativa`, { chaveIdempotencia })),
+  confirm: (carrinhoId, chaveIdempotencia, metodoPagamento) =>
+    call(api.post(`/carrinhos/${id(carrinhoId)}/confirmacao-demonstrativa`, { chaveIdempotencia, metodoPagamento })),
 };
+
+export const authApi = {
+  register: (dados) => call(api.post('/auth/cadastro', dados)),
+  login: (email, senha) => call(api.post('/auth/login', { email, senha })),
+  profile: () => call(api.get('/auth/perfil')),
+  updateProfile: (dados) => call(api.patch('/auth/perfil', dados)),
+  changePassword: (dados) => call(api.post('/auth/perfil/alterar-senha', dados)),
+  uploadPhoto: (blob, contentType) => call(api.put('/auth/perfil/foto', blob, { headers: { 'Content-Type': contentType } })),
+  removePhoto: () => call(api.delete('/auth/perfil/foto')),
+  deleteAccount: (senhaAtual) => call(api.delete('/auth/conta', { data: { senhaAtual } })),
+  logout: () => call(api.post('/auth/logout')),
+};
+
+export const profilePhotoSource = version => ({
+  uri: `${apiUrl}/auth/perfil/foto?v=${encodeURIComponent(String(version || 0))}`,
+  headers: currentAuthToken ? { Authorization: `Bearer ${currentAuthToken}` } : {},
+});
 
 export default api;

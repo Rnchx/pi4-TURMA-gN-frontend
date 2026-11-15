@@ -8,16 +8,16 @@ import Button from "../components/ui/Button";
 import StateView from "../components/ui/StateView";
 import { ListSkeleton } from "../components/ui/Skeleton";
 import { useCart } from "../state/CartContext";
+import { useAuth } from "../state/AuthContext";
 import { money } from "../utils/format";
 import { font, colors, motion, radius, shadow, spacing, type } from "../theme";
 
 // E8 resumo (CT14) e E9 confirmação demonstrativa (CT15). Os valores exibidos são os mesmos enviados à confirmação.
 export default function Summary({ navigation }) {
   const insets = useSafeAreaInsets();
-  const { carrinhoId, summary, confirm } = useCart();
+  const { carrinhoId, summary } = useCart();
+  const { usuario } = useAuth();
   const [state, setState] = useState({ status: "loading", data: null, error: null });
-  const [confirming, setConfirming] = useState(false);
-  const [confirmError, setConfirmError] = useState(null);
 
   const load = useCallback(async () => {
     if (!carrinhoId) {
@@ -34,25 +34,8 @@ export default function Summary({ navigation }) {
   }, [carrinhoId, summary]);
 
   useFocusEffect(useCallback(() => {
-    setConfirmError(null);
     load();
   }, [load]));
-
-  // Bloqueio local (fluxo E9) e uma única requisição por toque; novas tentativas reutilizam a mesma chave.
-  const submit = async () => {
-    if (!state.data?.podeConfirmar || confirming) return;
-    setConfirming(true);
-    setConfirmError(null);
-    try {
-      const compra = await confirm();
-      navigation.navigate("Confirmation", { compra });
-    } catch (error) {
-      setConfirmError(error);
-      if (error.codigo === "confirmacaoNaoPermitida") load();
-    } finally {
-      setConfirming(false);
-    }
-  };
 
   if (state.status === "loading") {
     return <View style={[styles.screen, styles.top]}><ListSkeleton rows={3} /></View>;
@@ -97,6 +80,12 @@ export default function Summary({ navigation }) {
           </View>
         </Animated.View>
 
+        <View style={styles.card}>
+          <Text style={type.heading}>Responsável pela compra</Text>
+          <Text style={type.bodyStrong}>{usuario?.nome}</Text>
+          <Text style={type.small}>{usuario?.email}</Text>
+        </View>
+
         <View style={styles.notice}>
           <MaterialCommunityIcons name="information-outline" size={22} color={colors.primary} />
           <Text style={[type.small, styles.flex, { color: colors.ink }]}>
@@ -113,27 +102,16 @@ export default function Summary({ navigation }) {
           </View>
         ) : null}
 
-        {confirmError ? (
-          <Animated.View entering={FadeIn.duration(motion.quick)} style={[styles.notice, styles.error]} accessibilityRole="alert">
-            <MaterialCommunityIcons name={confirmError.offline ? "wifi-off" : "alert-circle-outline"} size={22} color={colors.danger} />
-            <Text style={[type.small, styles.flex, { color: colors.ink }]}>
-              {confirmError.message} {confirmError.codigo === "confirmacaoIndisponivel" || confirmError.offline
-                ? "Você pode tentar de novo sem risco de compra duplicada." : ""}
-            </Text>
-          </Animated.View>
-        ) : null}
       </ScrollView>
 
       <View style={[styles.bar, { paddingBottom: spacing.sm + insets.bottom }]}>
         <Button
-          title={confirmError ? "Tentar confirmar novamente" : "Confirmar compra demonstrativa"}
-          icon="check-decagram"
-          variant="accent"
-          onPress={submit}
-          loading={confirming}
+          title="Escolher método de pagamento"
+          icon="credit-card-outline"
+          onPress={() => navigation.navigate("Payment")}
           disabled={!podeConfirmar}
         />
-        <Button title="Voltar ao carrinho" variant="outline" icon="arrow-left" onPress={() => navigation.navigate("ShopCart")} disabled={confirming} />
+        <Button title="Voltar ao carrinho" variant="outline" icon="arrow-left" onPress={() => navigation.navigate("ShopCart")} />
       </View>
     </View>
   );

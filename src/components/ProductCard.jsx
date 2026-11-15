@@ -47,6 +47,7 @@ export default function ProductCard({ product, onOpen, onAdded, style }) {
         <View>
           <ProductImage uri={product.imagemUrl} label={product.nome} />
           {product.emOferta ? <OfferBadge style={styles.badge} /> : null}
+          {product.idadeMinima === 18 ? <View style={styles.ageBadge}><Text style={styles.ageText}>18+</Text></View> : null}
         </View>
         <Text style={styles.name} maxFontSizeMultiplier={1.4}>{product.nome}</Text>
         <View style={styles.priceBox}>
@@ -87,6 +88,8 @@ const styles = StyleSheet.create({
   // Reserva o espaço do botão "+" para o preço nunca ficar sob ele.
   priceBox: { paddingRight: 48, minHeight: 44, justifyContent: "flex-end" },
   badge: { position: "absolute", top: 0, left: 0 },
+  ageBadge: { position: "absolute", top: 0, right: 0, paddingHorizontal: 7, paddingVertical: 3, borderRadius: radius.pill, backgroundColor: colors.danger },
+  ageText: { fontSize: 12, fontFamily: font.bold, color: colors.onPrimary },
   addPosition: { position: "absolute", right: spacing.sm, bottom: spacing.sm },
   add: {
     width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.primary,

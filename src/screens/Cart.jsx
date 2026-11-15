@@ -149,7 +149,7 @@ export default function Cart({ navigation }) {
             {money(cart.total)}
           </Animated.Text>
         </View>
-        <Button title="Revisar compra" icon="receipt-text-outline" onPress={() => navigation.navigate("Summary")} disabled={pending.size > 0} />
+        <Button title="Continuar compra" icon="arrow-right" onPress={() => navigation.navigate("Summary")} disabled={pending.size > 0} />
       </View>
 
       <ConfirmDialog

@@ -6,6 +6,7 @@ import CartButton, { BadgeCount } from "../components/CartButton";
 import HeaderBack from "../components/HeaderBack";
 import DrawerContent from "./DrawerContent";
 import { useCart } from "../state/CartContext";
+import { useAuth } from "../state/AuthContext";
 import { font, colors, radius } from "../theme";
 
 import Home from "../screens/Home";
@@ -15,6 +16,14 @@ import Cart from "../screens/Cart";
 import Summary from "../screens/Summary";
 import Confirmation from "../screens/Confirmation";
 import Offers from "../screens/Offers";
+import Login from "../screens/Login";
+import Register from "../screens/Register";
+import Profile from "../screens/Profile";
+import Payment from "../screens/Payment";
+import Review from "../screens/Review";
+import EditProfile from "../screens/EditProfile";
+import ChangePassword from "../screens/ChangePassword";
+import DeleteAccount from "../screens/DeleteAccount";
 
 const Drawer = createDrawerNavigator();
 
@@ -26,13 +35,16 @@ function CartBadge() {
   return <BadgeCount count={count} />;
 }
 
-// Nomes das telas preservados: Home, CategoryProducts, ProductDetails, ShopCart.
-// A tela legada Register (cadastro sem acesso na interface) foi removida (OP#1336).
+// Nomes das telas existentes preservados; Login/Register formam o fluxo público de autenticação.
 export default function DrawerRoutes() {
+  const { usuario, loading } = useAuth();
+  if (loading) return <View style={{ flex: 1, backgroundColor: colors.background }} />;
   return (
     <Drawer.Navigator
+      key={usuario ? "app" : "auth"}
+      initialRouteName={usuario ? "Home" : "Login"}
       backBehavior="history"
-      drawerContent={(props) => <DrawerContent {...props} />}
+      drawerContent={usuario ? (props) => <DrawerContent {...props} /> : undefined}
       screenOptions={{
         headerShown: true,
         headerStyle: { backgroundColor: colors.primary },
@@ -41,6 +53,7 @@ export default function DrawerRoutes() {
         headerShadowVisible: false,
         headerRight: () => <CartButton />,
         drawerType: "front",
+        swipeEnabled: Boolean(usuario),
         drawerStyle: { backgroundColor: colors.background, width: 290 },
         overlayColor: colors.overlay,
         drawerActiveBackgroundColor: colors.primarySoft,
@@ -51,6 +64,13 @@ export default function DrawerRoutes() {
         sceneStyle: { backgroundColor: colors.background },
       }}
     >
+      {!usuario ? (
+        <>
+          <Drawer.Screen name="Login" component={Login} options={{ title: "Entrar", headerShown: false, drawerItemStyle: { display: "none" } }} />
+          <Drawer.Screen name="Register" component={Register} options={{ ...hidden, title: "Criar conta", headerRight: () => null, drawerItemStyle: { display: "none" } }} />
+        </>
+      ) : (
+        <>
       <Drawer.Screen
         name="Home"
         component={Home}
@@ -84,6 +104,14 @@ export default function DrawerRoutes() {
         component={Confirmation}
         options={{ drawerItemStyle: { display: "none" }, title: "Compra concluída", headerRight: () => null }}
       />
+      <Drawer.Screen name="Profile" component={Profile} options={{ title: "Meu perfil", drawerLabel: "Meu perfil", drawerIcon: icon("account-outline"), headerRight: () => null }} />
+      <Drawer.Screen name="EditProfile" component={EditProfile} options={{ ...hidden, title: "Editar perfil", headerRight: () => null }} />
+      <Drawer.Screen name="ChangePassword" component={ChangePassword} options={{ ...hidden, title: "Alterar senha", headerRight: () => null }} />
+      <Drawer.Screen name="DeleteAccount" component={DeleteAccount} options={{ ...hidden, title: "Excluir conta", headerRight: () => null }} />
+      <Drawer.Screen name="Payment" component={Payment} options={{ ...hidden, title: "Método de pagamento", headerRight: () => null }} />
+      <Drawer.Screen name="Review" component={Review} options={{ ...hidden, title: "Revisão final", headerRight: () => null }} />
+        </>
+      )}
     </Drawer.Navigator>
   );
 }

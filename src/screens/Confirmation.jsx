@@ -85,6 +85,12 @@ export default function Confirmation({ navigation, route }) {
         </View>
       </Animated.View>
 
+      <Animated.View entering={FadeIn.duration(motion.enter).delay(240)} style={styles.card}>
+        <Text style={type.heading}>Método demonstrativo</Text>
+        <Text style={type.body}>{({ pix: "PIX", credito: "Cartão de crédito", debito: "Cartão de débito", boleto: "Boleto bancário" })[compra.metodoPagamento]}</Text>
+        {compra.usuario ? <Text style={type.small}>Responsável: {compra.usuario.nome}</Text> : null}
+      </Animated.View>
+
       <View style={styles.notice}>
         <MaterialCommunityIcons name="shield-check-outline" size={22} color={colors.accentText} />
         <Text style={[type.small, styles.flex, { color: colors.ink }]}>Compra demonstrativa: nenhuma cobrança foi realizada.</Text>

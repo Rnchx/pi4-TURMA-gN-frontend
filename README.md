@@ -22,7 +22,7 @@ Aplicativo de supermercado digital desenvolvido como parte do Projeto Integrador
 
 O **Safra Online** é uma evolução do projeto Safra Online, desenvolvido com o objetivo de modernizar a experiência de compras em um supermercado digital.
 
-A aplicação permite explorar categorias de produtos, visualizar informações detalhadas, adicionar itens ao carrinho e avançar pelo fluxo de compra. O projeto também prevê a evolução da experiência por meio de funcionalidades como assistência por inteligência artificial e um processo de checkout mais completo.
+A aplicação permite criar uma conta, entrar com sessão autenticada, explorar categorias de produtos, visualizar informações detalhadas, adicionar itens ao carrinho e concluir uma compra demonstrativa.
 
 Este repositório contém o **frontend da aplicação**, desenvolvido com React Native e Expo, responsável pela interface e pela interação com o usuário.
 
@@ -35,7 +35,9 @@ O Safra Online é um projeto acadêmico desenvolvido no contexto do Projeto Inte
 - **Detalhes dos produtos:** visualização de imagens, informações e opções de compra.
 - **Ofertas demonstrativas:** vitrine na página inicial e tela própria no menu, com preço anterior riscado, preço atual e o aviso de que as ofertas são demonstrativas.
 - **Carrinho de compras:** gerenciamento dos produtos selecionados e de suas quantidades.
-- **Checkout:** evolução do fluxo de finalização da compra, incluindo seleção de método de pagamento e preenchimento de informações.
+- **Checkout demonstrativo:** carrinho → resumo → PIX, crédito, débito ou boleto fictício → revisão → confirmação, sem coletar dados financeiros ou realizar cobrança.
+- **Autenticação e perfil:** cadastro com nascimento, login, foto persistente, edição de nome, troca de senha, logout e exclusão permanente. No aplicativo nativo, o token de sessão fica no `expo-secure-store`; na web, permanece somente em memória.
+- **Restrição etária acadêmica:** produtos 18+ são sinalizados; adição e checkout dependem da idade calculada pelo Java a partir do cadastro autenticado.
 - **Assistente com inteligência artificial:** proposta de assistência durante a experiência de compra.
 - **Identidade visual renovada:** interface modernizada, com componentes e elementos visuais padronizados.
 
@@ -177,7 +179,7 @@ frontend/
 
 ## Fluxo de compra
 
-Catálogo (CT1) → categoria e subcategoria (CT3, CT6) → detalhes (CT7) → adicionar (CT8) → carrinho (CT11–CT13) → resumo (CT14) → confirmação demonstrativa (CT15). Subtotais e totais são sempre os devolvidos pela API; o aplicativo não recalcula valores. A confirmação usa a mesma chave de idempotência em novas tentativas, sem risco de compra duplicada. Nenhum pagamento é cobrado.
+Cadastro/login → catálogo (CT1) → categoria e subcategoria (CT3, CT6) → detalhes (CT7) → adicionar (CT8) → carrinho (CT11–CT13) → resumo (CT14) → método fictício → revisão → confirmação demonstrativa (CT15). Subtotais e totais são sempre os devolvidos pela API; o aplicativo não recalcula valores. A confirmação usa a mesma chave de idempotência em novas tentativas, sem risco de compra duplicada. Nenhum pagamento é cobrado e nenhum dado de cartão é solicitado.
 
 Ofertas (E12, CT22): a página inicial mostra as ofertas logo abaixo das categorias, e o menu tem a tela **Ofertas**. Os cartões e os detalhes do produto exibem o selo "OFERTA", o preço anterior riscado e o preço atual, todos vindos da API. Se as ofertas não carregarem, a vitrine some e o catálogo continua funcionando.
 

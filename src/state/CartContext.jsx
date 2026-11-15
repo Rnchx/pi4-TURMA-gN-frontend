@@ -133,10 +133,10 @@ export function CartProvider({ children }) {
   const summary = useCallback(() => cartApi.summary(idRef.current), []);
 
   // CT15: a mesma chave é usada em todas as tentativas desta compra, evitando duplicidade.
-  const confirm = useCallback(async () => {
+  const confirm = useCallback(async (metodoPagamento) => {
     const id = idRef.current;
     keyRef.current ??= newCheckoutKey();
-    const result = await cartApi.confirm(id, keyRef.current);
+    const result = await cartApi.confirm(id, keyRef.current, metodoPagamento);
     reset();
     return result;
   }, [reset]);
