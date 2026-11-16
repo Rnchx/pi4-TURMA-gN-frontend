@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "../components/ui/Button";
@@ -9,7 +9,7 @@ import { useAuth } from "../state/AuthContext";
 import { useCart } from "../state/CartContext";
 import { money } from "../utils/format";
 import { paymentLabel } from "./Payment";
-import { colors, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, colors, radius, shadow, spacing, type } from "../theme";
 
 export default function Review({ navigation, route }) {
   const metodo = route.params?.metodoPagamento;

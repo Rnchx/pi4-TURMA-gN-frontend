@@ -1,10 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { AccessibilityInfo, StyleSheet, Text, View } from "react-native";
+import { AccessibilityInfo, Text, View } from "react-native";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./PressableScale";
-import { font, colors, motion, radius, shadow, spacing } from "../../theme";
+import { StyleSheet, font, colors, motion, radius, shadow, spacing } from "../../theme";
 
 const ToastContext = createContext(null);
 

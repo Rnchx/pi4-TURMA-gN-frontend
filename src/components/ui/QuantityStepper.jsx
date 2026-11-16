@@ -1,8 +1,8 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./PressableScale";
-import { font, colors, motion, radius, spacing } from "../../theme";
+import { StyleSheet, font, colors, motion, radius, spacing } from "../../theme";
 
 export const MIN_QUANTITY = 1;
 export const MAX_QUANTITY = 99;

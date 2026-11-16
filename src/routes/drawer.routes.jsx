@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Brand from "../components/Brand";
@@ -7,7 +7,7 @@ import HeaderBack from "../components/HeaderBack";
 import DrawerContent from "./DrawerContent";
 import { useCart } from "../state/CartContext";
 import { useAuth } from "../state/AuthContext";
-import { font, colors, radius } from "../theme";
+import { StyleSheet, font, colors, radius } from "../theme";
 
 import Home from "../screens/Home";
 import CategoryProducts from "../screens/CategoryProducts";
@@ -24,6 +24,7 @@ import Review from "../screens/Review";
 import EditProfile from "../screens/EditProfile";
 import ChangePassword from "../screens/ChangePassword";
 import DeleteAccount from "../screens/DeleteAccount";
+import Settings from "../screens/Settings";
 
 const Drawer = createDrawerNavigator();
 
@@ -47,7 +48,7 @@ export default function DrawerRoutes() {
       drawerContent={usuario ? (props) => <DrawerContent {...props} /> : undefined}
       screenOptions={{
         headerShown: true,
-        headerStyle: { backgroundColor: colors.primary },
+        headerStyle: { backgroundColor: colors.header },
         headerTintColor: colors.onPrimary,
         headerTitleStyle: { fontFamily: font.semibold, fontSize: 19 },
         headerShadowVisible: false,
@@ -105,6 +106,7 @@ export default function DrawerRoutes() {
         options={{ drawerItemStyle: { display: "none" }, title: "Compra concluída", headerRight: () => null }}
       />
       <Drawer.Screen name="Profile" component={Profile} options={{ title: "Meu perfil", drawerLabel: "Meu perfil", drawerIcon: icon("account-outline"), headerRight: () => null }} />
+      <Drawer.Screen name="Settings" component={Settings} options={{ title: "Configurações", drawerLabel: "Configurações", drawerIcon: icon("cog-outline"), headerRight: () => null }} />
       <Drawer.Screen name="EditProfile" component={EditProfile} options={{ ...hidden, title: "Editar perfil", headerRight: () => null }} />
       <Drawer.Screen name="ChangePassword" component={ChangePassword} options={{ ...hidden, title: "Alterar senha", headerRight: () => null }} />
       <Drawer.Screen name="DeleteAccount" component={DeleteAccount} options={{ ...hidden, title: "Excluir conta", headerRight: () => null }} />

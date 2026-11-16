@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { BackHandler, ScrollView, StyleSheet, Text, View } from "react-native";
+import { BackHandler, ScrollView, Text, View } from "react-native";
 import Animated, { FadeIn, useReducedMotion } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,7 +9,7 @@ import StateView from "../components/ui/StateView";
 import BrandMark from "../components/brand/BrandMark";
 import { SpeedLines, Wheel, enter, rise } from "../components/brand/Motion";
 import { dateTime, money } from "../utils/format";
-import { font, colors, motion, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, font, colors, motion, radius, shadow, spacing, type } from "../theme";
 
 // Selo da marca: o carrinho (monograma) chega da esquerda com as linhas de velocidade,
 // as rodinhas assentam e o selo laranja de "concluído" aparece (escala 0,9 → 1, nunca de zero).

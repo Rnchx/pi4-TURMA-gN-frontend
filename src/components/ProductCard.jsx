@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./ui/PressableScale";
@@ -7,11 +7,11 @@ import ProductImage from "./ProductImage";
 import { OfferBadge, PreviousPrice } from "./OfferPrice";
 import { useCart } from "../state/CartContext";
 import { useToast } from "./ui/Toast";
-import { font, colors, motion, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, font, colors, motion, radius, shadow, spacing, type } from "../theme";
 import { money } from "../utils/format";
 
 // Cartão do catálogo: toque abre os detalhes (CT7); o botão "+" adiciona 1 unidade (CT8).
-export default function ProductCard({ product, onOpen, onAdded, style }) {
+export default function ProductCard({ product, onOpen, onAdded, style, compact = false }) {
   const { addItem, pending } = useCart();
   const toast = useToast();
   const [added, setAdded] = useState(false);
@@ -33,11 +33,11 @@ export default function ProductCard({ product, onOpen, onAdded, style }) {
 
   // A área que abre os detalhes e o botão "+" são irmãos (na web, botão dentro de botão é HTML inválido).
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, compact && styles.compactContainer, style]}>
       <PressableScale
         onPress={() => onOpen(product)}
-        containerStyle={styles.flex}
-        style={styles.card}
+        containerStyle={[styles.flex, compact && styles.compactFlex]}
+        style={[styles.card, compact && styles.compactCard]}
         accessibilityRole="button"
         accessibilityLabel={product.emOferta
           ? `${product.nome}, oferta, de ${money(product.precoAnterior)} por ${money(product.preco)}`
@@ -49,7 +49,7 @@ export default function ProductCard({ product, onOpen, onAdded, style }) {
           {product.emOferta ? <OfferBadge style={styles.badge} /> : null}
           {product.idadeMinima === 18 ? <View style={styles.ageBadge}><Text style={styles.ageText}>18+</Text></View> : null}
         </View>
-        <Text style={styles.name} maxFontSizeMultiplier={1.4}>{product.nome}</Text>
+        <Text style={[styles.name, compact && styles.compactName]} numberOfLines={2} maxFontSizeMultiplier={1.4}>{product.nome}</Text>
         <View style={styles.priceBox}>
           <PreviousPrice product={product} />
           <Text style={type.price} maxFontSizeMultiplier={1.4}>{money(product.preco)}</Text>
@@ -79,12 +79,16 @@ export default function ProductCard({ product, onOpen, onAdded, style }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  compactContainer: { flex: 0, alignSelf: "flex-start" },
   flex: { flex: 1 },
+  compactFlex: { flex: 0 },
   card: {
     flex: 1, gap: spacing.xs, padding: spacing.sm, backgroundColor: colors.surface,
     borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, ...shadow.card,
   },
+  compactCard: { flex: 0, height: 326 },
   name: { fontSize: 14, lineHeight: 19, fontFamily: font.semibold, color: colors.ink, flexGrow: 1 },
+  compactName: { flexGrow: 0, minHeight: 38 },
   // Reserva o espaço do botão "+" para o preço nunca ficar sob ele.
   priceBox: { paddingRight: 48, minHeight: 44, justifyContent: "flex-end" },
   badge: { position: "absolute", top: 0, left: 0 },

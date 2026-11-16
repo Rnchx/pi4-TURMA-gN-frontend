@@ -1,6 +1,6 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import Animated, { useReducedMotion } from "react-native-reanimated";
-import { colors, radius, spacing } from "../../theme";
+import { StyleSheet, colors, radius, spacing } from "../../theme";
 
 // Bloco de carregamento com pulso suave (animação CSS do Reanimated); estático com redução de movimento.
 export function Skeleton({ width = "100%", height = 16, rounded = radius.sm, style }) {

@@ -1,8 +1,7 @@
-import { StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import PressableScale from "./ui/PressableScale";
-import { colors, spacing } from "../theme";
+import { StyleSheet, colors, spacing } from "../theme";
 
 // Voltar no cabeçalho das telas internas (detalhes, categoria, resumo). Sem histórico, vai para o início.
 export default function HeaderBack({ fallback = "Home" }) {

@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import Button from "../components/ui/Button";
 import FormField from "../components/ui/FormField";
 import { useAuth } from "../state/AuthContext";
-import { colors, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, colors, radius, shadow, spacing, type } from "../theme";
 
 const cpfMask = value => value.replace(/\D/g, "").slice(0, 11)
   .replace(/^(\d{3})(\d)/, "$1.$2").replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")

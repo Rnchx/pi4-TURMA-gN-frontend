@@ -30,16 +30,16 @@ O Safra Online é um projeto acadêmico desenvolvido no contexto do Projeto Inte
 
 ## Funcionalidades
 
-- **Página inicial:** apresentação do supermercado, categorias e produtos em destaque.
+- **Página inicial:** apresentação do supermercado, 10 setores e produtos em destaque.
 - **Navegação por categorias:** exploração dos departamentos e subcategorias de produtos.
 - **Detalhes dos produtos:** visualização de imagens, informações e opções de compra.
 - **Ofertas demonstrativas:** vitrine na página inicial e tela própria no menu, com preço anterior riscado, preço atual e o aviso de que as ofertas são demonstrativas.
 - **Carrinho de compras:** gerenciamento dos produtos selecionados e de suas quantidades.
 - **Checkout demonstrativo:** carrinho → resumo → PIX, crédito, débito ou boleto fictício → revisão → confirmação, sem coletar dados financeiros ou realizar cobrança.
-- **Autenticação e perfil:** cadastro com nascimento, login, foto persistente, edição de nome, troca de senha, logout e exclusão permanente. No aplicativo nativo, o token de sessão fica no `expo-secure-store`; na web, permanece somente em memória.
+- **Autenticação e perfil:** cadastro com nascimento, login, foto persistente, edição de nome, troca de senha, logout e exclusão permanente. Fotos JPEG, PNG, WebP e HEIC/HEIF selecionadas no dispositivo são redimensionadas, convertidas para JPEG e comprimidas antes da validação do limite de 2 MB. No aplicativo nativo, o token de sessão fica no `expo-secure-store`; na web, permanece somente em memória.
 - **Restrição etária acadêmica:** produtos 18+ são sinalizados; adição e checkout dependem da idade calculada pelo Java a partir do cadastro autenticado.
 - **Assistente com inteligência artificial:** proposta de assistência durante a experiência de compra.
-- **Identidade visual renovada:** interface modernizada, com componentes e elementos visuais padronizados.
+- **Identidade visual renovada:** interface modernizada, com componentes e elementos visuais padronizados, tema claro/escuro persistente e o banner oficial na entrada.
 
 > Algumas funcionalidades estão previstas para implementação ou evolução durante o desenvolvimento. A disponibilidade de cada recurso depende do estágio atual do projeto.
 
@@ -49,6 +49,7 @@ O Safra Online é um projeto acadêmico desenvolvido no contexto do Projeto Inte
 |---|---|
 | React Native | Desenvolvimento da interface mobile |
 | Expo | Ambiente e ferramentas para desenvolvimento e execução |
+| Expo Image Manipulator | Conversão, redimensionamento e compressão da foto de perfil |
 | React Navigation | Gerenciamento da navegação entre telas |
 | JavaScript / TypeScript | Desenvolvimento da aplicação, conforme a configuração do projeto |
 | npm | Gerenciamento de dependências |
@@ -153,7 +154,7 @@ frontend/
 │   ├── components/         # Componentes de domínio (card de produto, carrinho no cabeçalho, marca)
 │   │   └── ui/             # Sistema visual: botões, chips, quantidade, skeletons, estados, aviso, diálogo
 │   ├── routes/             # Drawer (React Navigation 7) e conteúdo do menu
-│   ├── screens/            # Home, Offers, CategoryProducts, ProductDetails, Cart, Summary, Confirmation
+│   ├── screens/            # Home, ofertas, catálogo, compra, perfil e configurações
 │   ├── services/api.js     # Comunicação com a API (EXPO_PUBLIC_API_URL, tempo limite, erros)
 │   ├── state/              # Carrinho compartilhado (Context API, ADR 0005)
 │   ├── theme/              # Cores, tipografia, espaçamentos, bordas, sombras e movimento
@@ -165,6 +166,7 @@ frontend/
 ## Sistema visual
 
 - **Identidade:** segue o manual em `assets/design/images` (`apresentacao-safra-final.png` e `apresentacao-monograma.png`). Azul Safra (`#072858`) como cor principal, Laranja Safra (`#F48A0B`) como destaque, branco e o fundo claro da apresentação (`#F6F4EF`). Tipografia Outfit (`@expo-google-fonts/outfit`). Textos com contraste AA; sobre o laranja o texto é sempre azul, nunca branco.
+- **Aparência:** a tela Configurações permite escolher Claro ou Escuro. A preferência fica no `expo-secure-store` no aplicativo nativo e no `localStorage` na web; navegação, telas, campos, cards, avisos e estados compartilham a paleta selecionada.
 - **Elementos da marca:** assinatura horizontal no cabeçalho, monograma "o S que anda" (o "S" sobre duas rodinhas), linhas de velocidade do símbolo, onda azul com contorno laranja e o traço laranja sob os títulos. Os arquivos derivados ficam em `assets/brand` (gerados a partir de `assets/design/images`, sem alterar as cores).
 - **Componentes:** todos os botões, cards, campos de quantidade, chips, estados (carregando, vazio, erro, sem conexão, sucesso), avisos e diálogos vêm de `src/components/ui`; os elementos animados da marca, de `src/components/brand`.
 - **Movimento:** a marca sempre anda para a frente, da esquerda para a direita, como o carrinho do símbolo.
@@ -182,6 +184,10 @@ frontend/
 Cadastro/login → catálogo (CT1) → categoria e subcategoria (CT3, CT6) → detalhes (CT7) → adicionar (CT8) → carrinho (CT11–CT13) → resumo (CT14) → método fictício → revisão → confirmação demonstrativa (CT15). Subtotais e totais são sempre os devolvidos pela API; o aplicativo não recalcula valores. A confirmação usa a mesma chave de idempotência em novas tentativas, sem risco de compra duplicada. Nenhum pagamento é cobrado e nenhum dado de cartão é solicitado.
 
 Ofertas (E12, CT22): a página inicial mostra as ofertas logo abaixo das categorias, e o menu tem a tela **Ofertas**. Os cartões e os detalhes do produto exibem o selo "OFERTA", o preço anterior riscado e o preço atual, todos vindos da API. Se as ofertas não carregarem, a vitrine some e o catálogo continua funcionando.
+
+Na página inicial, os cartões do carrossel de ofertas usam largura responsiva e altura limitada ao conteúdo. O catálogo completo continua em grade logo após o carrossel, sem expansão vertical provocada pelo contêiner pai.
+
+As fotos de perfil são processadas no dispositivo e enviadas como JPEG. O backend valida o conteúdo real e mantém o arquivo no volume Docker `safra-profile-photos`; substituir ou remover a imagem atualiza imediatamente o perfil.
 
 O roteiro de teste em 360 × 800 e as capturas estão em [`docs/roteiro-360x800`](docs/roteiro-360x800/README.md).
 

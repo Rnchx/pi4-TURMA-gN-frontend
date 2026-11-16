@@ -1,7 +1,7 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./PressableScale";
-import { font, colors, radius, spacing } from "../../theme";
+import { StyleSheet, font, colors, radius, spacing } from "../../theme";
 
 const variants = {
   primary: { bg: colors.primary, fg: colors.onPrimary, border: colors.primary },

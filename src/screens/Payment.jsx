@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "../components/ui/Button";
 import PressableScale from "../components/ui/PressableScale";
-import { colors, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, colors, radius, shadow, spacing, type } from "../theme";
 import { useState } from "react";
 
 const METHODS = [

@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-import { colors, font, spacing, type } from "../../theme";
+import { Text, View } from "react-native";
+import { StyleSheet, colors, font, spacing, type } from "../../theme";
 
 // Título de seção com o traço laranja da assinatura (banner-safra-readme-*.png, sob "ONLINE").
 export default function SectionTitle({ title, aside, style }) {

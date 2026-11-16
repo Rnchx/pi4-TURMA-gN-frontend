@@ -75,8 +75,7 @@ export function AuthProvider({ children }) {
   }, [clearSession]);
 
   const uploadPhoto = useCallback(async (asset) => {
-    const response = await fetch(asset.uri);
-    const blob = await response.blob();
+    const blob = asset.blob || await fetch(asset.uri).then(response => response.blob());
     await authApi.uploadPhoto(blob, asset.mimeType || blob.type || "image/jpeg");
     await refreshProfile();
     setPhotoVersion(value => value + 1);

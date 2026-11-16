@@ -1,6 +1,6 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import Animated, { useReducedMotion } from "react-native-reanimated";
-import { colors, motion } from "../../theme";
+import { StyleSheet, colors, motion } from "../../theme";
 
 // Linhas de velocidade do símbolo (logo-safra-online-horizontal.png): três traços arredondados,
 // o do meio precedido de um ponto. Medidas relativas à largura total do conjunto.

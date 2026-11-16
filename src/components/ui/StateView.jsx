@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "./Button";
 import BrandMark from "../brand/BrandMark";
-import { colors, motion, radius, spacing, type } from "../../theme";
+import { StyleSheet, colors, motion, radius, spacing, type } from "../../theme";
 
 const tones = {
   empty: { icon: "basket-outline", bg: colors.primarySoft, fg: colors.primary },

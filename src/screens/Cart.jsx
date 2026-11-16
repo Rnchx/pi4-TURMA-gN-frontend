@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,7 +15,7 @@ import { useToast } from "../components/ui/Toast";
 import { useCart } from "../state/CartContext";
 import { cachedProduct } from "../state/productCache";
 import { items as itemsLabel, money } from "../utils/format";
-import { font, colors, motion, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, font, colors, motion, radius, shadow, spacing, type } from "../theme";
 
 // E4–E7: consulta (CT11), quantidade (CT12), remoção (CT13), subtotais e total calculados pela API.
 export default function Cart({ navigation }) {

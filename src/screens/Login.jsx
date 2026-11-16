@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Brand from "../components/Brand";
 import Button from "../components/ui/Button";
 import FormField from "../components/ui/FormField";
 import { useAuth } from "../state/AuthContext";
-import { colors, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, colors, radius, shadow, spacing, type } from "../theme";
 
 export default function Login({ navigation }) {
   const { login } = useAuth();
@@ -22,7 +21,10 @@ export default function Login({ navigation }) {
 
   return (
     <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-      <View style={styles.hero}><Brand size="lg" /><Text style={styles.tagline}>Entre para continuar sua compra</Text></View>
+      <View style={styles.hero}>
+        <Image source={require("../../assets/design/images/banner-safra-monograma.png")} style={styles.logo} resizeMode="contain" accessibilityLabel="SAFRA Online" />
+        <Text style={styles.tagline}>Entre para continuar sua compra</Text>
+      </View>
       <View style={styles.card}>
         <MaterialCommunityIcons name="account-circle-outline" size={42} color={colors.primary} />
         <Text style={type.title}>Acessar conta</Text>
@@ -39,7 +41,8 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   screen: { flex: 1, justifyContent: "center", padding: spacing.lg, gap: spacing.lg, backgroundColor: colors.background },
   hero: { alignItems: "center", gap: spacing.xs },
+  logo: { width: 320, maxWidth: "100%", height: 113, borderRadius: radius.md },
   tagline: { ...type.body, color: colors.inkMuted },
-  card: { padding: spacing.lg, gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.xl, ...shadow.card },
+  card: { width: "100%", maxWidth: 520, alignSelf: "center", padding: spacing.lg, gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.xl, ...shadow.card },
   error: { ...type.small, color: colors.danger, backgroundColor: colors.dangerSoft, padding: spacing.sm, borderRadius: radius.md },
 });

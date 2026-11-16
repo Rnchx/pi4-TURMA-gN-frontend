@@ -1,9 +1,9 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Brand from "../components/Brand";
-import { colors, spacing, type } from "../theme";
+import { StyleSheet, colors, spacing, type } from "../theme";
 
 const WAVE = require("../../assets/brand/onda.png");
 

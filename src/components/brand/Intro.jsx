@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import Animated, { useReducedMotion } from "react-native-reanimated";
 import { SpeedLines, enter, rise } from "./Motion";
-import { colors, font, motion } from "../../theme";
+import { StyleSheet, colors, font, motion } from "../../theme";
 
 const ICON = require("../../../assets/design/images/icone-app-safra-online.png");
 

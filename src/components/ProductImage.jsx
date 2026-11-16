@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { colors, radius } from "../theme";
+import { StyleSheet, colors, radius } from "../theme";
 
 // Imagem do produto vinda da API (HTTPS). Sem imagem ou com falha de rede, mostra um marcador neutro.
 export default function ProductImage({ uri, size, style, rounded = radius.md, label }) {

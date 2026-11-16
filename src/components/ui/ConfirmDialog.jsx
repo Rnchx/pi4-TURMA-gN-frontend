@@ -1,7 +1,7 @@
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, Text, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import Button from "./Button";
-import { colors, motion, radius, shadow, spacing, type } from "../../theme";
+import { StyleSheet, colors, motion, radius, shadow, spacing, type } from "../../theme";
 
 // Diálogo modal para ações destrutivas (remover item). Fecha pelo botão, pelo fundo ou pelo voltar do Android.
 // O fundo clicável é irmão do cartão (na web, botão dentro de botão é HTML inválido).

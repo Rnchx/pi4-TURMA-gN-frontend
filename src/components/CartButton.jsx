@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import PressableScale from "./ui/PressableScale";
 import { SpeedLines } from "./brand/Motion";
 import { useCart } from "../state/CartContext";
-import { font, colors, motion, radius, spacing } from "../theme";
+import { StyleSheet, font, colors, motion, radius, spacing } from "../theme";
 
 // Ícone do carrinho no cabeçalho, com contador de unidades. Quando um produto entra, o carrinho
 // "anda": dá uma arrancada para a frente com as linhas de velocidade da marca atrás dele, e o

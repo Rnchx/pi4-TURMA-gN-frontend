@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,7 +16,7 @@ import { catalogApi } from "../services/api";
 import { useCart } from "../state/CartContext";
 import { rememberProducts } from "../state/productCache";
 import { capitalize, money } from "../utils/format";
-import { colors, motion, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, colors, motion, radius, shadow, spacing, type } from "../theme";
 
 // E3 detalhes do produto (CT7) e E4 adição ao carrinho (CT8).
 export default function ProductDetails({ navigation, route }) {

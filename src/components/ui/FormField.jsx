@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
-import { colors, font, radius, spacing, touch, type } from "../../theme";
+import { Text, TextInput, View } from "react-native";
+import { StyleSheet, colors, font, radius, spacing, touch, type } from "../../theme";
 
 export default function FormField({ label, error, ...props }) {
   return (

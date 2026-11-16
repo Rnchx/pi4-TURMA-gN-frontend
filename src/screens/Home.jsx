@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { FlatList, Image, RefreshControl, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { FlatList, Image, RefreshControl, Text, View, useWindowDimensions } from "react-native";
 import Animated, { useReducedMotion } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ProductCard from "../components/ProductCard";
@@ -14,7 +14,7 @@ import { categoryIcon, categoryLabel } from "../components/categoryIcon";
 import { catalogApi } from "../services/api";
 import { rememberProducts } from "../state/productCache";
 import { padGrid } from "../utils/grid";
-import { font, colors, radius, spacing, type } from "../theme";
+import { StyleSheet, font, colors, radius, spacing, type } from "../theme";
 
 const WAVE = require("../../assets/brand/onda.png");
 const WAVE_RATIO = 0.16; // altura da onda em relação à largura da tela (achatada para não roubar espaço)
@@ -107,7 +107,7 @@ export default function Home({ navigation }) {
                 <View style={styles.categoryIcon}>
                   <MaterialCommunityIcons name={categoryIcon(category.nome)} size={26} color={colors.primary} />
                 </View>
-                <Text style={styles.categoryName} maxFontSizeMultiplier={1.3}>{categoryLabel(category.nome)}</Text>
+                <Text style={styles.categoryName} numberOfLines={3} maxFontSizeMultiplier={1.3}>{categoryLabel(category.nome)}</Text>
               </PressableScale>
             </Animated.View>
           ))}
@@ -135,7 +135,7 @@ export default function Home({ navigation }) {
             keyExtractor={(item) => `oferta-${item.produtoId}`}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.offersList}
-            renderItem={({ item }) => <ProductCard product={item} onOpen={openProduct} onAdded={onAdded} style={styles.offerCard} />}
+            renderItem={({ item }) => <ProductCard product={item} onOpen={openProduct} onAdded={onAdded} compact style={[styles.offerCard, { width: Math.max(150, Math.min(176, width * 0.43)) }]} />}
           />
         </View>
       ) : null}
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   categories: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs, paddingHorizontal: spacing.md },
   categoryCell: { width: "31.5%", flexGrow: 1 },
   category: {
-    minHeight: 92, alignItems: "center", justifyContent: "center", gap: spacing.xxs, padding: spacing.xs,
+    minHeight: 112, alignItems: "center", justifyContent: "center", gap: spacing.xxs, padding: spacing.xs,
     backgroundColor: colors.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border,
   },
   categoryIcon: { width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center" },

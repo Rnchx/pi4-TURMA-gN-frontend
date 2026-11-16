@@ -1,6 +1,6 @@
 import { Fragment } from "react";
-import { Image, StyleSheet, View } from "react-native";
-import { colors } from "../../theme";
+import { Image, View } from "react-native";
+import { StyleSheet, colors } from "../../theme";
 
 const S_WHITE = require("../../../assets/brand/monograma-s-branco.png");
 const S_BLUE = require("../../../assets/brand/monograma-s-azul.png");

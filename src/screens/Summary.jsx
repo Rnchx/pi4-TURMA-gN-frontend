@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,7 +10,7 @@ import { ListSkeleton } from "../components/ui/Skeleton";
 import { useCart } from "../state/CartContext";
 import { useAuth } from "../state/AuthContext";
 import { money } from "../utils/format";
-import { font, colors, motion, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, font, colors, motion, radius, shadow, spacing, type } from "../theme";
 
 // E8 resumo (CT14) e E9 confirmação demonstrativa (CT15). Os valores exibidos são os mesmos enviados à confirmação.
 export default function Summary({ navigation }) {

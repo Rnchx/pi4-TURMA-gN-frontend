@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-import { font, colors, radius, spacing } from "../theme";
+import { Text, View } from "react-native";
+import { StyleSheet, font, colors, radius, spacing } from "../theme";
 import { money } from "../utils/format";
 
 // Selo "OFERTA" no laranja da marca (texto sempre azul sobre o laranja, conforme o manual).

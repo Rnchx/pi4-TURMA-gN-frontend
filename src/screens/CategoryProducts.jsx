@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ProductCard from "../components/ProductCard";
 import Chip from "../components/ui/Chip";
@@ -11,7 +11,7 @@ import { catalogApi } from "../services/api";
 import { rememberProducts } from "../state/productCache";
 import { padGrid } from "../utils/grid";
 import { capitalize } from "../utils/format";
-import { colors, radius, spacing, type } from "../theme";
+import { StyleSheet, colors, radius, spacing, type } from "../theme";
 
 // E2: produtos da categoria (complemento /categorias/:id/produtos) e por subcategoria (CT6).
 export default function CategoryProducts({ navigation, route }) {

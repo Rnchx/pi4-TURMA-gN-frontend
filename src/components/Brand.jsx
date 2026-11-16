@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import BrandMark from "./brand/BrandMark";
-import { colors, font } from "../theme";
+import { StyleSheet, colors, font } from "../theme";
 
 // Assinatura horizontal da marca (logo-safra-online-horizontal.png) em versão para o cabeçalho azul:
 // monograma branco com rodas laranja, "safra" em Outfit Bold e "ONLINE" espaçado em laranja.

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import Button from "../components/ui/Button";
 import FormField from "../components/ui/FormField";
 import { useAuth } from "../state/AuthContext";
-import { colors, radius, shadow, spacing, type } from "../theme";
+import { StyleSheet, colors, radius, shadow, spacing, type } from "../theme";
 
 export default function EditProfile({ navigation }) {
   const { usuario, updateProfile } = useAuth();

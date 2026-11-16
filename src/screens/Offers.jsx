@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ProductCard from "../components/ProductCard";
 import StateView from "../components/ui/StateView";
@@ -8,7 +8,7 @@ import { useToast } from "../components/ui/Toast";
 import { catalogApi } from "../services/api";
 import { rememberProducts } from "../state/productCache";
 import { padGrid } from "../utils/grid";
-import { colors, radius, spacing, type } from "../theme";
+import { StyleSheet, colors, radius, spacing, type } from "../theme";
 
 // E12 ofertas demonstrativas (CT22): preço anterior, preço atual e o aviso devolvido pela API.
 export default function Offers({ navigation }) {

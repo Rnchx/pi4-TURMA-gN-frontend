@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { processProfileImage } from "../services/profile-image";
 import Button from "../components/ui/Button";
 import { profilePhotoSource } from "../services/api";
 import { useAuth } from "../state/AuthContext";
-import { colors, radius, shadow, spacing, type } from "../theme";
-
-const accepted = new Set(["image/jpeg", "image/png", "image/webp"]);
+import { StyleSheet, colors, radius, shadow, spacing, type } from "../theme";
 
 export default function Profile({ navigation }) {
   const { usuario, photoVersion, uploadPhoto, removePhoto, logout } = useAuth();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const [previewUri, setPreviewUri] = useState(null);
 
   const choosePhoto = async () => {
     setError(null);
@@ -25,26 +25,29 @@ export default function Profile({ navigation }) {
       mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [1, 1], quality: 0.85,
     });
     if (result.canceled) return;
-    const asset = result.assets[0];
-    if ((asset.mimeType && !accepted.has(asset.mimeType)) || (asset.fileSize && asset.fileSize > 2 * 1024 * 1024)) {
-      setError("Escolha uma imagem JPEG, PNG ou WebP de até 2 MB.");
-      return;
-    }
     setBusy(true);
-    try { await uploadPhoto(asset); } catch (e) { setError(e.message); } finally { setBusy(false); }
+    try {
+      const processed = await processProfileImage(result.assets[0]);
+      setPreviewUri(processed.uri);
+      await uploadPhoto(processed);
+      setPreviewUri(null);
+    } catch (e) {
+      setPreviewUri(null);
+      setError(e.message || "Não foi possível processar e enviar a foto.");
+    } finally { setBusy(false); }
   };
 
   const remove = async () => {
     setBusy(true); setError(null);
-    try { await removePhoto(); } catch (e) { setError(e.message); } finally { setBusy(false); }
+    try { await removePhoto(); setPreviewUri(null); } catch (e) { setError(e.message); } finally { setBusy(false); }
   };
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <View style={styles.card}>
         <View style={styles.avatar}>
-          {usuario?.fotoPerfil
-            ? <Image source={profilePhotoSource(photoVersion)} style={styles.photo} accessibilityLabel="Foto de perfil" />
+          {previewUri || usuario?.fotoPerfil
+            ? <Image source={previewUri ? { uri: previewUri } : profilePhotoSource(photoVersion)} style={styles.photo} accessibilityLabel={previewUri ? "Prévia da foto de perfil" : "Foto de perfil"} />
             : <MaterialCommunityIcons name="account" size={52} color={colors.onPrimary} />}
         </View>
         <Text style={type.title}>{usuario?.nome}</Text>

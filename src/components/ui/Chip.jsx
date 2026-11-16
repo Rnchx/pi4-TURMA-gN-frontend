@@ -1,7 +1,7 @@
-import { StyleSheet, Text } from "react-native";
+import { Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./PressableScale";
-import { font, colors, motion, radius, spacing } from "../../theme";
+import { StyleSheet, font, colors, motion, radius, spacing } from "../../theme";
 
 export default function Chip({ label, selected = false, onPress, icon }) {
   return (
