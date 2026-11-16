@@ -3,20 +3,20 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PressableScale from "./PressableScale";
 import { StyleSheet, font, colors, radius, spacing } from "../../theme";
 
-const variants = {
-  primary: { bg: colors.primary, fg: colors.onPrimary, border: colors.primary },
+const variants = () => ({
+  primary: { bg: colors.primary, fg: colors.onAction, border: colors.primary },
   accent: { bg: colors.accent, fg: colors.onAccent, border: colors.accent },
   secondary: { bg: colors.primarySoft, fg: colors.primary, border: colors.primarySoft },
   outline: { bg: colors.surface, fg: colors.primary, border: colors.primaryMuted },
   ghost: { bg: "transparent", fg: colors.primary, border: "transparent" },
   danger: { bg: colors.danger, fg: colors.onPrimary, border: colors.danger },
-};
+});
 
 export default function Button({
   title, onPress, variant = "primary", icon, loading = false, disabled = false, size = "lg", style, containerStyle,
   accessibilityLabel, accessibilityHint,
 }) {
-  const v = variants[variant];
+  const v = variants()[variant];
   const inactive = disabled || loading;
   return (
     <PressableScale

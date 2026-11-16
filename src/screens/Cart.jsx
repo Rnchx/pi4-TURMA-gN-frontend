@@ -179,11 +179,11 @@ const styles = StyleSheet.create({
   itemTop: { flexDirection: "row", alignItems: "flex-start", gap: spacing.xxs },
   remove: { width: 44, height: 44, alignItems: "center", justifyContent: "center", marginTop: -10, marginRight: -8 },
   itemBottom: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: spacing.xs, marginTop: spacing.xxs },
-  subtotal: { fontSize: 17, fontFamily: font.bold, color: colors.primaryDark },
+  subtotal: { fontSize: 17, fontFamily: font.bold, color: colors.price },
   bar: {
     position: "absolute", left: 0, right: 0, bottom: 0, gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.md,
     backgroundColor: colors.surface, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, ...shadow.bar,
   },
   totalRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  total: { ...type.display, color: colors.primaryDark },
+  total: { ...type.display, color: colors.price },
 });

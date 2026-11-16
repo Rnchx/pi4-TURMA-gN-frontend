@@ -118,11 +118,11 @@ const styles = StyleSheet.create({
   centerText: { textAlign: "center" },
   muted: { color: colors.inkMuted },
   card: { backgroundColor: colors.surface, borderRadius: radius.xl, padding: spacing.md, gap: spacing.xs, ...shadow.card },
-  code: { fontSize: 20, lineHeight: 28, fontFamily: font.bold, color: colors.primaryDark, letterSpacing: 0.5 },
+  code: { fontSize: 20, lineHeight: 28, fontFamily: font.bold, color: colors.price, letterSpacing: 0.5 },
   flex: { flex: 1 },
   line: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.border },
   subtotal: { fontSize: 16, fontFamily: font.bold, color: colors.ink },
   totalRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: spacing.xs },
-  total: { ...type.title, color: colors.primaryDark },
+  total: { ...type.title, color: colors.price },
   notice: { flexDirection: "row", gap: spacing.xs, alignItems: "center", padding: spacing.md, backgroundColor: colors.accentSoft, borderRadius: radius.lg },
 });

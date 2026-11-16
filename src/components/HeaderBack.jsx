@@ -13,7 +13,7 @@ export default function HeaderBack({ fallback = "Home" }) {
       accessibilityLabel="Voltar"
       style={styles.button}
     >
-      <MaterialCommunityIcons name="arrow-left" size={26} color={colors.onPrimary} />
+      <MaterialCommunityIcons name="arrow-left" size={26} color={colors.onHeader} />
     </PressableScale>
   );
 }

@@ -20,8 +20,8 @@ export default function Chip({ label, selected = false, onPress, icon }) {
         },
       ]}
     >
-      {icon ? <MaterialCommunityIcons name={icon} size={18} color={selected ? colors.onPrimary : colors.primary} /> : null}
-      <Text style={[styles.label, { color: selected ? colors.onPrimary : colors.ink }]} maxFontSizeMultiplier={1.4}>{label}</Text>
+      {icon ? <MaterialCommunityIcons name={icon} size={18} color={selected ? colors.onAction : colors.primary} /> : null}
+      <Text style={[styles.label, { color: selected ? colors.onAction : colors.ink }]} maxFontSizeMultiplier={1.4}>{label}</Text>
     </PressableScale>
   );
 }

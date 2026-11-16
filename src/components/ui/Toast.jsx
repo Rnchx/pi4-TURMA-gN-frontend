@@ -8,10 +8,10 @@ import { StyleSheet, font, colors, motion, radius, shadow, spacing } from "../..
 
 const ToastContext = createContext(null);
 
-const tones = {
+const tones = () => ({
   success: { icon: "check-circle", fg: colors.accent },
   error: { icon: "alert-circle-outline", fg: colors.accent },
-};
+});
 
 // Aviso breve de resultado (adicionar ao carrinho, erros de rede). Anunciado ao leitor de tela.
 export function ToastProvider({ children }) {
@@ -29,7 +29,7 @@ export function ToastProvider({ children }) {
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const value = useMemo(() => ({ show, hide }), [show, hide]);
-  const t = toast ? tones[toast.tone] : null;
+  const t = toast ? tones()[toast.tone] : null;
 
   return (
     <ToastContext.Provider value={value}>
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm, paddingLeft: spacing.md, paddingRight: spacing.xs,
     backgroundColor: colors.primary, borderRadius: radius.lg, borderLeftWidth: 4, borderLeftColor: colors.accent, ...shadow.raised,
   },
-  message: { flex: 1, color: colors.onPrimary, fontSize: 15, lineHeight: 21, fontFamily: font.semibold },
+  message: { flex: 1, color: colors.onAction, fontSize: 15, lineHeight: 21, fontFamily: font.semibold },
   action: { minHeight: 44, justifyContent: "center", paddingHorizontal: spacing.sm, borderRadius: radius.md },
   actionLabel: { color: colors.accentOnPrimary, fontSize: 15, fontFamily: font.bold },
 });

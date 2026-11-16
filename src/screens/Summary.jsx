@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   line: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.border },
   subtotal: { fontSize: 16, fontFamily: font.bold, color: colors.ink },
   totalRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: spacing.xs },
-  total: { ...type.display, color: colors.primaryDark },
+  total: { ...type.display, color: colors.price },
   notice: { flexDirection: "row", gap: spacing.xs, alignItems: "flex-start", padding: spacing.md, backgroundColor: colors.primarySoft, borderRadius: radius.lg },
   warn: { backgroundColor: colors.accentSoft },
   error: { backgroundColor: colors.dangerSoft },

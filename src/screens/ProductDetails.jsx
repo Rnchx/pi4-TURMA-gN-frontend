@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   imageWrap: { backgroundColor: colors.surface, borderRadius: radius.xl, padding: spacing.sm, ...shadow.card },
   badge: { position: "absolute", top: spacing.md, left: spacing.md },
   breadcrumb: { ...type.caption, color: colors.primary, textTransform: "uppercase" },
-  price: { ...type.display, color: colors.primaryDark },
+  price: { ...type.display, color: colors.price },
   descriptionBox: { gap: spacing.xxs, padding: spacing.md, backgroundColor: colors.surface, borderRadius: radius.lg },
   notice: { flexDirection: "row", gap: spacing.xs, alignItems: "flex-start", padding: spacing.sm, backgroundColor: colors.primarySoft, borderRadius: radius.md },
   ageNotice: { flexDirection: "row", gap: spacing.xs, alignItems: "flex-start", padding: spacing.sm, backgroundColor: colors.dangerSoft, borderRadius: radius.md },

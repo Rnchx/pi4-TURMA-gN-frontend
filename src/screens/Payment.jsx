@@ -26,7 +26,7 @@ export default function Payment({ navigation }) {
           return (
             <PressableScale key={method.id} onPress={() => setSelected(method.id)} accessibilityRole="radio" accessibilityState={{ checked: active }}
               style={[styles.option, active && styles.active]}>
-              <View style={[styles.icon, active && styles.iconActive]}><MaterialCommunityIcons name={method.icon} size={28} color={active ? colors.onPrimary : colors.primary} /></View>
+              <View style={[styles.icon, active && styles.iconActive]}><MaterialCommunityIcons name={method.icon} size={28} color={active ? colors.onAction : colors.primary} /></View>
               <View style={styles.flex}><Text style={type.bodyStrong}>{method.title}</Text><Text style={type.small}>{method.text}</Text></View>
               <MaterialCommunityIcons name={active ? "radiobox-marked" : "radiobox-blank"} size={24} color={active ? colors.accentText : colors.inkSubtle} />
             </PressableScale>

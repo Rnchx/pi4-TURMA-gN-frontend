@@ -32,12 +32,13 @@ export default function ProductCard({ product, onOpen, onAdded, style, compact =
   };
 
   // A área que abre os detalhes e o botão "+" são irmãos (na web, botão dentro de botão é HTML inválido).
+  // Oferta e catálogo compartilham exatamente a mesma geometria; "compact" altera apenas o comportamento no FlatList horizontal.
   return (
     <View style={[styles.container, compact && styles.compactContainer, style]}>
       <PressableScale
         onPress={() => onOpen(product)}
-        containerStyle={[styles.flex, compact && styles.compactFlex]}
-        style={[styles.card, compact && styles.compactCard]}
+        containerStyle={styles.detailsContainer}
+        style={styles.details}
         accessibilityRole="button"
         accessibilityLabel={product.emOferta
           ? `${product.nome}, oferta, de ${money(product.precoAnterior)} por ${money(product.preco)}`
@@ -49,52 +50,49 @@ export default function ProductCard({ product, onOpen, onAdded, style, compact =
           {product.emOferta ? <OfferBadge style={styles.badge} /> : null}
           {product.idadeMinima === 18 ? <View style={styles.ageBadge}><Text style={styles.ageText}>18+</Text></View> : null}
         </View>
-        <Text style={[styles.name, compact && styles.compactName]} numberOfLines={2} maxFontSizeMultiplier={1.4}>{product.nome}</Text>
+        <Text style={styles.name} numberOfLines={2} maxFontSizeMultiplier={1.4}>{product.nome}</Text>
+      </PressableScale>
+      <View style={styles.bottom}>
         <View style={styles.priceBox}>
           <PreviousPrice product={product} />
           <Text style={type.price} maxFontSizeMultiplier={1.4}>{money(product.preco)}</Text>
         </View>
-      </PressableScale>
-      <PressableScale
-        onPress={add}
-        disabled={busy}
-        scaleTo={0.9}
-        containerStyle={styles.addPosition}
-        accessibilityRole="button"
-        accessibilityLabel={`Adicionar ${product.nome} ao carrinho`}
-        accessibilityState={{ busy }}
-        style={[styles.add, added && styles.added]}
-      >
-        {busy ? (
-          <ActivityIndicator size="small" color={colors.onPrimary} />
-        ) : (
-          <Animated.View key={added ? "ok" : "plus"} entering={FadeIn.duration(motion.quick)}>
-            <MaterialCommunityIcons name={added ? "check" : "plus"} size={22} color={added ? colors.onAccent : colors.onPrimary} />
-          </Animated.View>
-        )}
-      </PressableScale>
+        <PressableScale
+          onPress={add}
+          disabled={busy}
+          scaleTo={0.9}
+          accessibilityRole="button"
+          accessibilityLabel={`Adicionar ${product.nome} ao carrinho`}
+          accessibilityState={{ busy }}
+          style={[styles.add, added && styles.added]}
+        >
+          {busy ? (
+            <ActivityIndicator size="small" color={colors.onAction} />
+          ) : (
+            <Animated.View key={added ? "ok" : "plus"} entering={FadeIn.duration(motion.quick)}>
+              <MaterialCommunityIcons name={added ? "check" : "plus"} size={22} color={added ? colors.onAccent : colors.onAction} />
+            </Animated.View>
+          )}
+        </PressableScale>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  compactContainer: { flex: 0, alignSelf: "flex-start" },
-  flex: { flex: 1 },
-  compactFlex: { flex: 0 },
-  card: {
-    flex: 1, gap: spacing.xs, padding: spacing.sm, backgroundColor: colors.surface,
+  container: {
+    flex: 1, height: 278, backgroundColor: colors.surface,
     borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, ...shadow.card,
   },
-  compactCard: { flex: 0, height: 326 },
-  name: { fontSize: 14, lineHeight: 19, fontFamily: font.semibold, color: colors.ink, flexGrow: 1 },
-  compactName: { flexGrow: 0, minHeight: 38 },
-  // Reserva o espaço do botão "+" para o preço nunca ficar sob ele.
-  priceBox: { paddingRight: 48, minHeight: 44, justifyContent: "flex-end" },
+  compactContainer: { flex: 0, alignSelf: "flex-start" },
+  detailsContainer: { flex: 1 },
+  details: { flex: 1, gap: spacing.xs, paddingHorizontal: spacing.sm, paddingTop: spacing.sm },
+  name: { fontSize: 14, lineHeight: 19, fontFamily: font.semibold, color: colors.ink, minHeight: 38 },
+  bottom: { flexDirection: "row", alignItems: "flex-end", gap: spacing.xs, paddingHorizontal: spacing.sm, paddingBottom: spacing.sm },
+  priceBox: { flex: 1, minHeight: 44, justifyContent: "flex-end" },
   badge: { position: "absolute", top: 0, left: 0 },
   ageBadge: { position: "absolute", top: 0, right: 0, paddingHorizontal: 7, paddingVertical: 3, borderRadius: radius.pill, backgroundColor: colors.danger },
   ageText: { fontSize: 12, fontFamily: font.bold, color: colors.onPrimary },
-  addPosition: { position: "absolute", right: spacing.sm, bottom: spacing.sm },
   add: {
     width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.primary,
     alignItems: "center", justifyContent: "center",

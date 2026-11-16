@@ -22,7 +22,7 @@ export default function Login({ navigation }) {
   return (
     <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <View style={styles.hero}>
-        <Image source={require("../../assets/design/images/banner-safra-monograma.png")} style={styles.logo} resizeMode="contain" accessibilityLabel="SAFRA Online" />
+        <Image source={require("../../assets/design/images/banner-safra-sem-fundo.png")} style={styles.logo} resizeMode="contain" accessibilityLabel="SAFRA Online" />
         <Text style={styles.tagline}>Entre para continuar sua compra</Text>
       </View>
       <View style={styles.card}>
@@ -41,7 +41,7 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   screen: { flex: 1, justifyContent: "center", padding: spacing.lg, gap: spacing.lg, backgroundColor: colors.background },
   hero: { alignItems: "center", gap: spacing.xs },
-  logo: { width: 320, maxWidth: "100%", height: 113, borderRadius: radius.md },
+  logo: { width: 360, maxWidth: "100%", height: 159 },
   tagline: { ...type.body, color: colors.inkMuted },
   card: { width: "100%", maxWidth: 520, alignSelf: "center", padding: spacing.lg, gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.xl, ...shadow.card },
   error: { ...type.small, color: colors.danger, backgroundColor: colors.dangerSoft, padding: spacing.sm, borderRadius: radius.md },

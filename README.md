@@ -36,7 +36,7 @@ O Safra Online é um projeto acadêmico desenvolvido no contexto do Projeto Inte
 - **Ofertas demonstrativas:** vitrine na página inicial e tela própria no menu, com preço anterior riscado, preço atual e o aviso de que as ofertas são demonstrativas.
 - **Carrinho de compras:** gerenciamento dos produtos selecionados e de suas quantidades.
 - **Checkout demonstrativo:** carrinho → resumo → PIX, crédito, débito ou boleto fictício → revisão → confirmação, sem coletar dados financeiros ou realizar cobrança.
-- **Autenticação e perfil:** cadastro com nascimento, login, foto persistente, edição de nome, troca de senha, logout e exclusão permanente. Fotos JPEG, PNG, WebP e HEIC/HEIF selecionadas no dispositivo são redimensionadas, convertidas para JPEG e comprimidas antes da validação do limite de 2 MB. No aplicativo nativo, o token de sessão fica no `expo-secure-store`; na web, permanece somente em memória.
+- **Autenticação e perfil:** cadastro com nascimento, login, foto persistente, edição de nome, troca de senha, logout e exclusão permanente. Fotos JPEG, PNG, WebP e HEIC/HEIF de até 10 MB podem ser reposicionadas e ampliadas no editor circular; o recorte final é convertido para JPEG e comprimido antes do envio. No aplicativo nativo, o token de sessão fica no `expo-secure-store`; na web, permanece somente em memória.
 - **Restrição etária acadêmica:** produtos 18+ são sinalizados; adição e checkout dependem da idade calculada pelo Java a partir do cadastro autenticado.
 - **Assistente com inteligência artificial:** proposta de assistência durante a experiência de compra.
 - **Identidade visual renovada:** interface modernizada, com componentes e elementos visuais padronizados, tema claro/escuro persistente e o banner oficial na entrada.
@@ -185,9 +185,9 @@ Cadastro/login → catálogo (CT1) → categoria e subcategoria (CT3, CT6) → d
 
 Ofertas (E12, CT22): a página inicial mostra as ofertas logo abaixo das categorias, e o menu tem a tela **Ofertas**. Os cartões e os detalhes do produto exibem o selo "OFERTA", o preço anterior riscado e o preço atual, todos vindos da API. Se as ofertas não carregarem, a vitrine some e o catálogo continua funcionando.
 
-Na página inicial, os cartões do carrossel de ofertas usam largura responsiva e altura limitada ao conteúdo. O catálogo completo continua em grade logo após o carrossel, sem expansão vertical provocada pelo contêiner pai.
+Na página inicial, os cartões do carrossel de ofertas usam a mesma altura, hierarquia e alinhamento de preço/botão dos cartões do catálogo. O catálogo completo continua em grade logo após o carrossel.
 
-As fotos de perfil são processadas no dispositivo e enviadas como JPEG. O backend valida o conteúdo real e mantém o arquivo no volume Docker `safra-profile-photos`; substituir ou remover a imagem atualiza imediatamente o perfil.
+As fotos de perfil são recortadas e processadas no dispositivo e enviadas como JPEG. O backend aceita o original processado de até 10 MB, valida o conteúdo real e mantém o arquivo no volume Docker `safra-profile-photos`; substituir ou remover a imagem atualiza imediatamente o perfil.
 
 O roteiro de teste em 360 × 800 e as capturas estão em [`docs/roteiro-360x800`](docs/roteiro-360x800/README.md).
 

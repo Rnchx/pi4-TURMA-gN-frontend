@@ -5,20 +5,20 @@ import { Easing, cubicBezier } from "react-native-reanimated";
 
 export const palettes = {
   light: {
-    primary: "#072858", header: "#072859", primaryDark: "#051C3F", primaryPressed: "#0B3370", primaryDetail: "#103778",
+    primary: "#072858", header: "#072858", primaryDark: "#051C3F", primaryPressed: "#0B3370", primaryDetail: "#103778",
     primarySoft: "#E8EDF6", primaryMuted: "#C9D4E8", accent: "#F48A0B", accentSoft: "#FEF1E1",
     accentText: "#A85300", accentOnPrimary: "#F48A0B", background: "#F6F4EF", surface: "#FFFFFF",
     surfaceMuted: "#EEEBE4", ink: "#0D1B33", inkMuted: "#4F5D73", inkSubtle: "#8590A3",
-    onPrimary: "#FFFFFF", onAccent: "#082957", border: "#E3E0D8", danger: "#B3261E",
+    onPrimary: "#FFFFFF", onHeader: "#FEFEFE", onAction: "#FFFFFF", onAccent: "#082957", price: "#062A5F", border: "#E3E0D8", danger: "#B3261E",
     dangerSoft: "#FBE9E7", success: "#0B5D42", successSoft: "#E5F2EC",
     overlay: "rgba(5, 20, 45, 0.5)", skeleton: "#E6E3DB",
   },
   dark: {
-    primary: "#68A5EB", header: "#072858", primaryDark: "#07182E", primaryPressed: "#8ABCF3", primaryDetail: "#183F6D",
+    primary: "#68A5EB", header: "#082859", primaryDark: "#07182E", primaryPressed: "#8ABCF3", primaryDetail: "#183F6D",
     primarySoft: "#153352", primaryMuted: "#BDD0E8", accent: "#F59A23", accentSoft: "#3D2A13",
     accentText: "#FFB75C", accentOnPrimary: "#FF9E28", background: "#061426", surface: "#0D2038",
     surfaceMuted: "#152B46", ink: "#F5F8FC", inkMuted: "#B9C7D8", inkSubtle: "#8FA1B7",
-    onPrimary: "#FFFFFF", onAccent: "#072858", border: "#29435F", danger: "#FF8A80",
+    onPrimary: "#FFFFFF", onHeader: "#FFFFFF", onAction: "#061426", onAccent: "#072858", price: "#F59A23", border: "#29435F", danger: "#FF8A80",
     dangerSoft: "#3B1D24", success: "#8BBBF0", successSoft: "#153552",
     overlay: "rgba(0, 5, 14, 0.72)", skeleton: "#1A3553",
   },
@@ -46,7 +46,7 @@ const typography = (palette) => ({
   small: { fontSize: 14, lineHeight: 20, fontFamily: font.regular, color: palette.inkMuted },
   smallStrong: { fontSize: 14, lineHeight: 20, fontFamily: font.semibold, color: palette.ink },
   caption: { fontSize: 12, lineHeight: 16, fontFamily: font.medium, color: palette.inkMuted, letterSpacing: 2 },
-  price: { fontSize: 18, lineHeight: 24, fontFamily: font.bold, color: palette.primary },
+  price: { fontSize: 18, lineHeight: 24, fontFamily: font.bold, color: palette.price },
 });
 export const type = new Proxy({}, { get: (_target, key) => typography(currentPalette())[key] });
 

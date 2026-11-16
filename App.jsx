@@ -18,7 +18,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 
 // GestureHandlerRootView é necessário para o gesto de abrir o Drawer no celular (Gesture Handler 3).
 function AppContent() {
-  const { ready: themeReady } = useAppTheme();
+  const { ready: themeReady, mode } = useAppTheme();
   const [fontsLoaded, fontError] = useFonts({
     Outfit_400Regular, Outfit_500Medium, Outfit_600SemiBold, Outfit_700Bold, Outfit_800ExtraBold,
   });
@@ -38,7 +38,7 @@ function AppContent() {
         <AuthProvider>
           <CartProvider>
             <ToastProvider>
-              <Routes />
+              <Routes key={mode} />
             </ToastProvider>
           </CartProvider>
         </AuthProvider>

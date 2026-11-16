@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Brand from "../components/Brand";
 import CartButton, { BadgeCount } from "../components/CartButton";
 import HeaderBack from "../components/HeaderBack";
+import HeaderHome from "../components/HeaderHome";
 import DrawerContent from "./DrawerContent";
 import { useCart } from "../state/CartContext";
 import { useAuth } from "../state/AuthContext";
@@ -25,6 +26,7 @@ import EditProfile from "../screens/EditProfile";
 import ChangePassword from "../screens/ChangePassword";
 import DeleteAccount from "../screens/DeleteAccount";
 import Settings from "../screens/Settings";
+import PhotoEditor from "../screens/PhotoEditor";
 
 const Drawer = createDrawerNavigator();
 
@@ -34,6 +36,10 @@ const icon = (name) => ({ color, size }) => <MaterialCommunityIcons name={name} 
 function CartBadge() {
   const { count } = useCart();
   return <BadgeCount count={count} />;
+}
+
+function HeaderActions({ cart = false }) {
+  return <View style={styles.headerActions}><HeaderHome />{cart ? <CartButton /> : null}</View>;
 }
 
 // Nomes das telas existentes preservados; Login/Register formam o fluxo público de autenticação.
@@ -49,7 +55,7 @@ export default function DrawerRoutes() {
       screenOptions={{
         headerShown: true,
         headerStyle: { backgroundColor: colors.header },
-        headerTintColor: colors.onPrimary,
+        headerTintColor: colors.onHeader,
         headerTitleStyle: { fontFamily: font.semibold, fontSize: 19 },
         headerShadowVisible: false,
         headerRight: () => <CartButton />,
@@ -80,7 +86,7 @@ export default function DrawerRoutes() {
       <Drawer.Screen
         name="Offers"
         component={Offers}
-        options={{ title: "Ofertas", drawerLabel: "Ofertas", drawerIcon: icon("tag-outline") }}
+        options={{ title: "Ofertas", drawerLabel: "Ofertas", drawerIcon: icon("tag-outline"), headerRight: () => <HeaderActions cart /> }}
       />
       <Drawer.Screen
         name="ShopCart"
@@ -94,24 +100,25 @@ export default function DrawerRoutes() {
             </View>
           ),
           drawerIcon: icon("cart-outline"),
-          headerRight: () => null,
+          headerRight: () => <HeaderActions />,
         }}
       />
-      <Drawer.Screen name="CategoryProducts" component={CategoryProducts} options={{ ...hidden, title: "Categoria" }} />
-      <Drawer.Screen name="ProductDetails" component={ProductDetails} options={{ ...hidden, title: "Produto" }} />
-      <Drawer.Screen name="Summary" component={Summary} options={{ ...hidden, title: "Resumo da compra", headerRight: () => null }} />
+      <Drawer.Screen name="CategoryProducts" component={CategoryProducts} options={{ ...hidden, title: "Categoria", headerRight: () => <HeaderActions cart /> }} />
+      <Drawer.Screen name="ProductDetails" component={ProductDetails} options={{ ...hidden, title: "Produto", headerRight: () => <HeaderActions cart /> }} />
+      <Drawer.Screen name="Summary" component={Summary} options={{ ...hidden, title: "Resumo da compra", headerRight: () => <HeaderActions /> }} />
       <Drawer.Screen
         name="Confirmation"
         component={Confirmation}
-        options={{ drawerItemStyle: { display: "none" }, title: "Compra concluída", headerRight: () => null }}
+        options={{ drawerItemStyle: { display: "none" }, title: "Compra concluída", headerRight: () => <HeaderActions /> }}
       />
-      <Drawer.Screen name="Profile" component={Profile} options={{ title: "Meu perfil", drawerLabel: "Meu perfil", drawerIcon: icon("account-outline"), headerRight: () => null }} />
-      <Drawer.Screen name="Settings" component={Settings} options={{ title: "Configurações", drawerLabel: "Configurações", drawerIcon: icon("cog-outline"), headerRight: () => null }} />
-      <Drawer.Screen name="EditProfile" component={EditProfile} options={{ ...hidden, title: "Editar perfil", headerRight: () => null }} />
-      <Drawer.Screen name="ChangePassword" component={ChangePassword} options={{ ...hidden, title: "Alterar senha", headerRight: () => null }} />
-      <Drawer.Screen name="DeleteAccount" component={DeleteAccount} options={{ ...hidden, title: "Excluir conta", headerRight: () => null }} />
-      <Drawer.Screen name="Payment" component={Payment} options={{ ...hidden, title: "Método de pagamento", headerRight: () => null }} />
-      <Drawer.Screen name="Review" component={Review} options={{ ...hidden, title: "Revisão final", headerRight: () => null }} />
+      <Drawer.Screen name="Profile" component={Profile} options={{ title: "Meu perfil", drawerLabel: "Meu perfil", drawerIcon: icon("account-outline"), headerRight: () => <HeaderActions /> }} />
+      <Drawer.Screen name="Settings" component={Settings} options={{ title: "Configurações", drawerLabel: "Configurações", drawerIcon: icon("cog-outline"), headerRight: () => <HeaderActions /> }} />
+      <Drawer.Screen name="EditProfile" component={EditProfile} options={{ ...hidden, title: "Editar perfil", headerRight: () => <HeaderActions /> }} />
+      <Drawer.Screen name="ChangePassword" component={ChangePassword} options={{ ...hidden, title: "Alterar senha", headerRight: () => <HeaderActions /> }} />
+      <Drawer.Screen name="DeleteAccount" component={DeleteAccount} options={{ ...hidden, title: "Excluir conta", headerRight: () => <HeaderActions /> }} />
+      <Drawer.Screen name="Payment" component={Payment} options={{ ...hidden, title: "Método de pagamento", headerRight: () => <HeaderActions /> }} />
+      <Drawer.Screen name="Review" component={Review} options={{ ...hidden, title: "Revisão final", headerRight: () => <HeaderActions /> }} />
+      <Drawer.Screen name="PhotoEditor" component={PhotoEditor} options={{ ...hidden, title: "Ajustar foto", headerRight: () => <HeaderActions /> }} />
         </>
       )}
     </Drawer.Navigator>
@@ -121,4 +128,5 @@ export default function DrawerRoutes() {
 const styles = StyleSheet.create({
   label: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
   labelText: { fontSize: 16, fontFamily: font.semibold },
+  headerActions: { flexDirection: "row", alignItems: "center" },
 });

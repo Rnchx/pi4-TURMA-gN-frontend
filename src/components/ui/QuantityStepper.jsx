@@ -53,7 +53,7 @@ function StepButton({ icon, disabled, onPress, style, label }) {
       accessibilityState={{ disabled }}
       style={[styles.button, style, disabled && styles.disabled]}
     >
-      <MaterialCommunityIcons name={icon} size={20} color={disabled ? colors.inkSubtle : colors.primaryDark} />
+      <MaterialCommunityIcons name={icon} size={20} color={disabled ? colors.inkSubtle : colors.primary} />
     </PressableScale>
   );
 }

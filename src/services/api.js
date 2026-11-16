@@ -53,6 +53,32 @@ export function toAppError(error) {
   return new AppError("semConexao", API_ERROR_MESSAGE);
 }
 
+async function uploadProfilePhoto(blob, contentType) {
+  if (!hasValidApiUrl) throw new AppError("semConexao", API_ERROR_MESSAGE);
+  try {
+    const response = await fetch(`${apiUrl}/auth/perfil/foto`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": contentType || blob.type || "image/jpeg",
+        ...(currentAuthToken ? { Authorization: `Bearer ${currentAuthToken}` } : {}),
+      },
+      body: blob,
+    });
+    const body = await response.json().catch(() => null);
+    if (!response.ok) {
+      if (body && typeof body.codigo === "string" && typeof body.mensagem === "string") {
+        throw new AppError(body.codigo, body.mensagem, response.status);
+      }
+      throw new AppError("erroInterno", "Não foi possível enviar a foto. Tente novamente.", response.status);
+    }
+    return body;
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    throw new AppError("semConexao", API_ERROR_MESSAGE);
+  }
+}
+
 async function call(request) {
   try {
     const { data } = await request;
@@ -95,7 +121,7 @@ export const authApi = {
   profile: () => call(api.get('/auth/perfil')),
   updateProfile: (dados) => call(api.patch('/auth/perfil', dados)),
   changePassword: (dados) => call(api.post('/auth/perfil/alterar-senha', dados)),
-  uploadPhoto: (blob, contentType) => call(api.put('/auth/perfil/foto', blob, { headers: { 'Content-Type': contentType } })),
+  uploadPhoto: uploadProfilePhoto,
   removePhoto: () => call(api.delete('/auth/perfil/foto')),
   deleteAccount: (senhaAtual) => call(api.delete('/auth/conta', { data: { senhaAtual } })),
   logout: () => call(api.post('/auth/logout')),
