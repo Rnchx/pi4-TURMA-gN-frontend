@@ -11,7 +11,21 @@ import { StyleSheet, colors, radius, shadow, spacing, type } from "../theme";
 
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
-const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+// Os callbacks de Gesture.Pan/Pinch rodam na UI thread como worklets. Tudo o que eles chamam de forma
+// síncrona também precisa ser worklet; chamar uma função JS comum ali derruba o app no celular.
+function clamp(value, min, max) {
+  "worklet";
+  return Math.min(max, Math.max(min, value));
+}
+
+// Limita o deslocamento para a imagem (ampliada por `zoom`) sempre cobrir o círculo: no máximo metade
+// do excedente para cada lado. Math.max(0, …) evita limite invertido quando a imagem tem o tamanho exato.
+function limitOffset(offset, size, zoom, viewport) {
+  "worklet";
+  const max = Math.max(0, (size * zoom - viewport) / 2);
+  return clamp(offset, -max, max);
+}
 
 export default function PhotoEditor({ navigation, route }) {
   const asset = route.params?.asset;
@@ -33,29 +47,26 @@ export default function PhotoEditor({ navigation, route }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
-  const constrain = (nextZoom, x, y) => ({
-    x: clamp(x, -(baseWidth * nextZoom - viewport) / 2, (baseWidth * nextZoom - viewport) / 2),
-    y: clamp(y, -(baseHeight * nextZoom - viewport) / 2, (baseHeight * nextZoom - viewport) / 2),
-  });
-
-  const pan = useMemo(() => Gesture.Pan()
-    .onBegin(() => { startX.set(translateX.get()); startY.set(translateY.get()); })
-    .onUpdate((event) => {
-      const limited = constrain(zoom.get(), startX.get() + event.translationX, startY.get() + event.translationY);
-      translateX.set(limited.x);
-      translateY.set(limited.y);
-    }), [baseHeight, baseWidth, viewport]);
-
-  const pinch = useMemo(() => Gesture.Pinch()
-    .onBegin(() => { startZoom.set(zoom.get()); })
-    .onUpdate((event) => {
-      const next = clamp(startZoom.get() * event.scale, MIN_ZOOM, MAX_ZOOM);
-      const limited = constrain(next, translateX.get(), translateY.get());
-      zoom.set(next);
-      translateX.set(limited.x);
-      translateY.set(limited.y);
-    })
-    .onEnd(() => { runOnJS(setZoomLabel)(Math.round(zoom.get() * 100)); }), [baseHeight, baseWidth, viewport]);
+  // Só worklets e shared values dentro dos callbacks; o rótulo de zoom (estado React) volta pela runOnJS.
+  const gesture = useMemo(() => {
+    const pan = Gesture.Pan()
+      .onBegin(() => { startX.set(translateX.get()); startY.set(translateY.get()); })
+      .onUpdate((event) => {
+        const currentZoom = zoom.get();
+        translateX.set(limitOffset(startX.get() + event.translationX, baseWidth, currentZoom, viewport));
+        translateY.set(limitOffset(startY.get() + event.translationY, baseHeight, currentZoom, viewport));
+      });
+    const pinch = Gesture.Pinch()
+      .onBegin(() => { startZoom.set(zoom.get()); })
+      .onUpdate((event) => {
+        const next = clamp(startZoom.get() * event.scale, MIN_ZOOM, MAX_ZOOM);
+        zoom.set(next);
+        translateX.set(limitOffset(translateX.get(), baseWidth, next, viewport));
+        translateY.set(limitOffset(translateY.get(), baseHeight, next, viewport));
+      })
+      .onFinalize(() => { runOnJS(setZoomLabel)(Math.round(zoom.get() * 100)); });
+    return Gesture.Simultaneous(pan, pinch);
+  }, [baseHeight, baseWidth, viewport, startX, startY, startZoom, translateX, translateY, zoom]);
 
   const imageStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.get() }, { translateY: translateY.get() }, { scale: zoom.get() }],
@@ -63,10 +74,9 @@ export default function PhotoEditor({ navigation, route }) {
 
   const changeZoom = (delta) => {
     const next = clamp(zoom.get() + delta, MIN_ZOOM, MAX_ZOOM);
-    const limited = constrain(next, translateX.get(), translateY.get());
     zoom.set(next);
-    translateX.set(limited.x);
-    translateY.set(limited.y);
+    translateX.set(limitOffset(translateX.get(), baseWidth, next, viewport));
+    translateY.set(limitOffset(translateY.get(), baseHeight, next, viewport));
     setZoomLabel(Math.round(next * 100));
   };
 
@@ -108,7 +118,7 @@ export default function PhotoEditor({ navigation, route }) {
         <Text style={type.heading}>Enquadre sua foto</Text>
         <Text style={type.small}>Arraste a imagem e use dois dedos ou os controles para ampliar. O círculo mostra o resultado final.</Text>
         <View style={[styles.editorShell, { width: viewport, height: viewport }]}>
-          <GestureDetector gesture={Gesture.Simultaneous(pan, pinch)}>
+          <GestureDetector gesture={gesture}>
             <View style={[styles.viewport, { width: viewport, height: viewport }]}>
               <Animated.Image
                 source={{ uri: asset.uri }}

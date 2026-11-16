@@ -34,7 +34,7 @@ export default function ProductCard({ product, onOpen, onAdded, style, compact =
   // A área que abre os detalhes e o botão "+" são irmãos (na web, botão dentro de botão é HTML inválido).
   // Oferta e catálogo compartilham exatamente a mesma geometria; "compact" altera apenas o comportamento no FlatList horizontal.
   return (
-    <View style={[styles.container, compact && styles.compactContainer, style]}>
+    <View style={[styles.container, compact ? styles.compactContainer : styles.gridContainer, style]}>
       <PressableScale
         onPress={() => onOpen(product)}
         containerStyle={styles.detailsContainer}
@@ -81,10 +81,14 @@ export default function ProductCard({ product, onOpen, onAdded, style, compact =
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, height: 278, backgroundColor: colors.surface,
+    height: 278, backgroundColor: colors.surface,
     borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, ...shadow.card,
   },
-  compactContainer: { flex: 0, alignSelf: "flex-start" },
+  // Grade de 2 colunas: divide a linha igualmente.
+  gridContainer: { flex: 1 },
+  // Carrossel horizontal: a largura vem de `style` e não pode ser comprimida. Não usar o atalho `flex`
+  // aqui: `flex: 0` vira `flex-basis: 0%` no React Native Web e, no eixo da lista, a base vence a largura.
+  compactContainer: { flexGrow: 0, flexShrink: 0, flexBasis: "auto", alignSelf: "flex-start" },
   detailsContainer: { flex: 1 },
   details: { flex: 1, gap: spacing.xs, paddingHorizontal: spacing.sm, paddingTop: spacing.sm },
   name: { fontSize: 14, lineHeight: 19, fontFamily: font.semibold, color: colors.ink, minHeight: 38 },

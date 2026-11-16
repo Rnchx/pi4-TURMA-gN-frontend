@@ -83,11 +83,17 @@ function darken(value) {
 }
 
 // Registra as duas paletas uma única vez e escolhe a folha ativa no momento do render.
+// Objeto: a versão escura é deduzida pelo valor de cada cor (darken). Isso é ambíguo quando dois tokens
+// têm o mesmo valor no tema claro (primary/header = #072858, accent/accentOnPrimary = #F48A0B) e só um
+// deles é usado. Função: recebe { colors, type, shadow } de cada tema e monta cada folha com os tokens
+// certos, sem dedução. Use a forma de função sempre que a folha usar um desses tokens que colidem.
 export const StyleSheet = {
   ...NativeStyleSheet,
   create(definition) {
-    const light = NativeStyleSheet.create(definition);
-    const dark = NativeStyleSheet.create(darken(definition));
+    const themed = typeof definition === "function";
+    const build = (mode) => definition({ colors: palettes[mode], type: typography(palettes[mode]), shadow: shadows(mode) });
+    const light = NativeStyleSheet.create(themed ? build("light") : definition);
+    const dark = NativeStyleSheet.create(themed ? build("dark") : darken(definition));
     return new Proxy(light, { get: (_target, key) => (activeMode === "dark" ? dark : light)[key] });
   },
 };

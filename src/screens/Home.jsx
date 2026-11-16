@@ -4,6 +4,7 @@ import Animated, { useReducedMotion } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ProductCard from "../components/ProductCard";
 import PressableScale from "../components/ui/PressableScale";
+import Button from "../components/ui/Button";
 import StateView from "../components/ui/StateView";
 import SectionTitle from "../components/ui/SectionTitle";
 import BrandMark from "../components/brand/BrandMark";
@@ -18,6 +19,8 @@ import { StyleSheet, font, colors, radius, spacing, type } from "../theme";
 
 const WAVE = require("../../assets/brand/onda.png");
 const WAVE_RATIO = 0.16; // altura da onda em relação à largura da tela (achatada para não roubar espaço)
+// "Todos os produtos" é exibido em lotes: a API devolve o catálogo inteiro, a Home renderiza aos poucos.
+const PRODUCTS_PER_PAGE = 10;
 
 // E1 catálogo (CT1) e E2 categorias (CT3): tudo vem da API SAFRA.
 export default function Home({ navigation }) {
@@ -27,12 +30,17 @@ export default function Home({ navigation }) {
   const [state, setState] = useState({ status: "loading", products: [], categories: [], error: null });
   const [refreshing, setRefreshing] = useState(false);
   const [offers, setOffers] = useState({ list: [], aviso: "" });
+  const [visibleProductCount, setVisibleProductCount] = useState(PRODUCTS_PER_PAGE);
+  // Largura fixa de cada oferta no carrossel (mesma faixa usada antes: 150 a 176 px).
+  const offerWidth = Math.round(Math.max(150, Math.min(176, width * 0.43)));
 
   const load = useCallback(async () => {
     setState((prev) => ({ ...prev, status: prev.products.length ? prev.status : "loading", error: null }));
     try {
       const [catalog, classification] = await Promise.all([catalogApi.listProducts(), catalogApi.listCategories()]);
       rememberProducts(catalog.produtos);
+      // Toda carga completa (inicial, pull-to-refresh ou "Tentar novamente") volta aos 10 primeiros.
+      setVisibleProductCount(PRODUCTS_PER_PAGE);
       setState({ status: "ready", products: catalog.produtos, categories: classification.categorias, error: null });
     } catch (error) {
       setState((prev) => ({ ...prev, status: "error", error }));
@@ -66,6 +74,28 @@ export default function Home({ navigation }) {
     actionLabel: "Ver carrinho",
     onAction: () => navigation.navigate("ShopCart"),
   });
+
+  // Recorte na ordem da API; o preenchimento da grade (padGrid) só entra depois do recorte.
+  const products = state.products;
+  const shownCount = Math.min(visibleProductCount, products.length);
+  const visibleProducts = products.slice(0, shownCount);
+  const hasMoreProducts = shownCount < products.length;
+  const productCounter = hasMoreProducts ? `${shownCount} de ${products.length} itens` : `${products.length} itens`;
+  const loadMoreProducts = () =>
+    setVisibleProductCount((current) => Math.min(products.length, current + PRODUCTS_PER_PAGE));
+  const nextBatch = Math.min(PRODUCTS_PER_PAGE, products.length - shownCount);
+
+  const footer = state.status === "ready" && hasMoreProducts ? (
+    <Button
+      title="Carregar mais produtos"
+      icon="chevron-down"
+      variant="outline"
+      onPress={loadMoreProducts}
+      containerStyle={styles.more}
+      accessibilityLabel={`Carregar mais produtos. Mostrando ${shownCount} de ${products.length}`}
+      accessibilityHint={`Mostra mais ${nextBatch} ${nextBatch === 1 ? "produto" : "produtos"}`}
+    />
+  ) : null;
 
   const header = (
     <View style={styles.header}>
@@ -135,14 +165,14 @@ export default function Home({ navigation }) {
             keyExtractor={(item) => `oferta-${item.produtoId}`}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.offersList}
-            renderItem={({ item }) => <ProductCard product={item} onOpen={openProduct} onAdded={onAdded} compact style={[styles.offerCard, { width: Math.max(150, Math.min(176, width * 0.43)) }]} />}
+            renderItem={({ item }) => <ProductCard product={item} onOpen={openProduct} onAdded={onAdded} compact style={{ width: offerWidth }} />}
           />
         </View>
       ) : null}
 
       <SectionTitle
         title="Todos os produtos"
-        aside={state.status === "ready" ? `${state.products.length} itens` : null}
+        aside={state.status === "ready" ? productCounter : null}
         style={[styles.section, styles.listTitle]}
       />
     </View>
@@ -165,12 +195,13 @@ export default function Home({ navigation }) {
 
   return (
     <FlatList
-      data={state.status === "ready" ? padGrid(state.products) : []}
+      data={state.status === "ready" ? padGrid(visibleProducts) : []}
       keyExtractor={(item) => String(item.produtoId)}
       numColumns={2}
       columnWrapperStyle={styles.row}
       contentContainerStyle={styles.content}
       ListHeaderComponent={header}
+      ListFooterComponent={footer}
       ListEmptyComponent={empty}
       renderItem={({ item }) => (item.vazio ? <View style={styles.flex} /> : <ProductCard product={item} onOpen={openProduct} onAdded={onAdded} />)}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} colors={[colors.primary]} />}
@@ -181,16 +212,18 @@ export default function Home({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+// Forma de função: header e accentOnPrimary têm o mesmo valor que primary e accent no tema claro,
+// então a dedução automática do tema escuro trocaria o azul-escuro do banner pelo azul-claro de ação.
+const styles = StyleSheet.create(({ colors: c, type: t }) => ({
+  screen: { flex: 1, backgroundColor: c.background },
   content: { paddingBottom: spacing.xxl, gap: spacing.sm },
   header: { gap: spacing.sm, marginBottom: spacing.xxs },
   hero: {},
-  heroBody: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.xs, backgroundColor: colors.header },
+  heroBody: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.xs, backgroundColor: c.header },
   heroText: { flex: 1, gap: spacing.xxs },
-  heroKicker: { ...type.caption, color: colors.accentOnPrimary },
-  heroTitle: { ...type.display, color: colors.onHeader },
-  heroSub: { ...type.small, color: colors.primaryMuted },
+  heroKicker: { ...t.caption, color: c.accentOnPrimary },
+  heroTitle: { ...t.display, color: c.onHeader },
+  heroSub: { ...t.small, color: c.primaryMuted },
   heroMark: { flexDirection: "row", alignItems: "center", marginRight: spacing.xxs },
   heroLines: { marginRight: -0.5, marginTop: -4 },
   // Proporção da onda (1000 × 224); o branco sob o contorno é trocado pelo fundo da tela.
@@ -200,17 +233,17 @@ const styles = StyleSheet.create({
   categoryCell: { width: "31.5%", flexGrow: 1 },
   category: {
     minHeight: 112, alignItems: "center", justifyContent: "center", gap: spacing.xxs, padding: spacing.xs,
-    backgroundColor: colors.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border,
+    backgroundColor: c.surface, borderRadius: radius.lg, borderWidth: 1, borderColor: c.border,
   },
-  categoryIcon: { width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.primarySoft, alignItems: "center", justifyContent: "center" },
-  categoryName: { fontSize: 13, lineHeight: 17, fontFamily: font.bold, color: colors.ink, textAlign: "center" },
+  categoryIcon: { width: 44, height: 44, borderRadius: radius.pill, backgroundColor: c.primarySoft, alignItems: "center", justifyContent: "center" },
+  categoryName: { fontSize: 13, lineHeight: 17, fontFamily: font.bold, color: c.ink, textAlign: "center" },
   listTitle: { marginTop: spacing.sm },
   offers: { gap: spacing.xs, marginTop: spacing.sm },
   offersHead: { flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" },
   seeAll: { flexDirection: "row", alignItems: "center", minHeight: 44, paddingLeft: spacing.sm },
-  seeAllText: { fontSize: 14, fontFamily: font.semibold, color: colors.primary },
+  seeAllText: { fontSize: 14, fontFamily: font.semibold, color: c.primary },
   offersList: { gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
-  offerCard: { width: 158 },
   row: { gap: spacing.sm, paddingHorizontal: spacing.md },
   flex: { flex: 1 },
-});
+  more: { marginHorizontal: spacing.md, marginTop: spacing.xs },
+}));
