@@ -79,6 +79,20 @@ export default function Confirmation({ navigation, route }) {
             <Text style={styles.subtotal}>{money(item.subtotal)}</Text>
           </View>
         ))}
+        {compra.subtotal !== undefined ? (
+          <>
+            <View style={styles.amountRow}>
+              <Text style={type.body}>Subtotal</Text>
+              <Text style={type.bodyStrong}>{money(compra.subtotal)}</Text>
+            </View>
+            <View style={styles.amountRow}>
+              <Text style={type.body}>{compra.cupom ? `Cupom ${compra.cupom}` : "Cupom"}</Text>
+              <Text style={[type.bodyStrong, compra.cupom && styles.discount]}>
+                {compra.cupom ? `− ${money(compra.desconto)}` : "Nenhum cupom"}
+              </Text>
+            </View>
+          </>
+        ) : null}
         <View style={styles.totalRow}>
           <Text style={type.heading}>Total</Text>
           <Text style={styles.total}>{money(compra.total)}</Text>
@@ -123,6 +137,8 @@ const styles = StyleSheet.create({
   line: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.border },
   subtotal: { fontSize: 16, fontFamily: font.bold, color: colors.ink },
   totalRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: spacing.xs },
+  amountRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm },
+  discount: { color: colors.success },
   total: { ...type.title, color: colors.price },
   notice: { flexDirection: "row", gap: spacing.xs, alignItems: "center", padding: spacing.md, backgroundColor: colors.accentSoft, borderRadius: radius.lg },
 });

@@ -7,8 +7,8 @@ import PressableScale from "../components/ui/PressableScale";
 import Button from "../components/ui/Button";
 import StateView from "../components/ui/StateView";
 import SectionTitle from "../components/ui/SectionTitle";
-import BrandMark from "../components/brand/BrandMark";
-import { SpeedLines, Wheel, enter, rise } from "../components/brand/Motion";
+import HomeFooter from "../components/HomeFooter";
+import { enter, rise } from "../components/brand/Motion";
 import { ProductGridSkeleton, Skeleton } from "../components/ui/Skeleton";
 import { useToast } from "../components/ui/Toast";
 import { categoryIcon, categoryLabel } from "../components/categoryIcon";
@@ -18,6 +18,8 @@ import { padGrid } from "../utils/grid";
 import { StyleSheet, font, colors, radius, spacing, type } from "../theme";
 
 const WAVE = require("../../assets/brand/onda.png");
+// Ícone oficial do app (quadrado, fundo azul igual ao do banner). Exibido inteiro, sem corte nem distorção.
+const APP_ICON = require("../../assets/design/images/icone-app-safra-hd-azul.png");
 const WAVE_RATIO = 0.16; // altura da onda em relação à largura da tela (achatada para não roubar espaço)
 // "Todos os produtos" é exibido em lotes: a API devolve o catálogo inteiro, a Home renderiza aos poucos.
 const PRODUCTS_PER_PAGE = 10;
@@ -85,17 +87,23 @@ export default function Home({ navigation }) {
     setVisibleProductCount((current) => Math.min(products.length, current + PRODUCTS_PER_PAGE));
   const nextBatch = Math.min(PRODUCTS_PER_PAGE, products.length - shownCount);
 
-  const footer = state.status === "ready" && hasMoreProducts ? (
-    <Button
-      title="Carregar mais produtos"
-      icon="chevron-down"
-      variant="outline"
-      onPress={loadMoreProducts}
-      containerStyle={styles.more}
-      accessibilityLabel={`Carregar mais produtos. Mostrando ${shownCount} de ${products.length}`}
-      accessibilityHint={`Mostra mais ${nextBatch} ${nextBatch === 1 ? "produto" : "produtos"}`}
-    />
-  ) : null;
+  // Rodapé da lista: "Carregar mais" (quando há mais itens), depois a onda e o footer da marca.
+  const footer = (
+    <View>
+      {state.status === "ready" && hasMoreProducts ? (
+        <Button
+          title="Carregar mais produtos"
+          icon="chevron-down"
+          variant="outline"
+          onPress={loadMoreProducts}
+          containerStyle={styles.more}
+          accessibilityLabel={`Carregar mais produtos. Mostrando ${shownCount} de ${products.length}`}
+          accessibilityHint={`Mostra mais ${nextBatch} ${nextBatch === 1 ? "produto" : "produtos"}`}
+        />
+      ) : null}
+      {state.status === "loading" ? null : <HomeFooter />}
+    </View>
+  );
 
   const header = (
     <View style={styles.header}>
@@ -110,9 +118,15 @@ export default function Home({ navigation }) {
             </Animated.Text>
           </View>
           <View style={styles.heroMark}>
-            <SpeedLines width={44} delay={260} duration={520} style={styles.heroLines} />
             <Animated.View style={enter({ reduced, delay: 200, distance: 28, duration: 520 })}>
-              <BrandMark size={52} renderWheel={(style, index) => <Wheel style={style} delay={640 + index * 70} />} />
+              <Image
+                source={APP_ICON}
+                style={styles.heroIcon}
+                resizeMode="contain"
+                accessible
+                accessibilityRole="image"
+                accessibilityLabel="Ícone do SAFRA Online: carrinho de compras em movimento"
+              />
             </Animated.View>
           </View>
         </View>
@@ -216,7 +230,7 @@ export default function Home({ navigation }) {
 // então a dedução automática do tema escuro trocaria o azul-escuro do banner pelo azul-claro de ação.
 const styles = StyleSheet.create(({ colors: c, type: t }) => ({
   screen: { flex: 1, backgroundColor: c.background },
-  content: { paddingBottom: spacing.xxl, gap: spacing.sm },
+  content: { gap: spacing.sm },
   header: { gap: spacing.sm, marginBottom: spacing.xxs },
   hero: {},
   heroBody: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.xs, backgroundColor: c.header },
@@ -225,7 +239,8 @@ const styles = StyleSheet.create(({ colors: c, type: t }) => ({
   heroTitle: { ...t.display, color: c.onHeader },
   heroSub: { ...t.small, color: c.primaryMuted },
   heroMark: { flexDirection: "row", alignItems: "center", marginRight: spacing.xxs },
-  heroLines: { marginRight: -0.5, marginTop: -4 },
+  // Quadrado com cantos arredondados (o próprio PNG já é arredondado); "contain" preserva a proporção.
+  heroIcon: { width: 92, height: 92, aspectRatio: 1, borderRadius: radius.lg },
   // Proporção da onda (1000 × 224); o branco sob o contorno é trocado pelo fundo da tela.
   wave: { width: "100%", marginTop: -1 },
   section: { marginHorizontal: spacing.md },

@@ -5,6 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ProductImage from "../components/ProductImage";
+import PurchaseHistory from "../components/PurchaseHistory";
 import Button from "../components/ui/Button";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 import PressableScale from "../components/ui/PressableScale";
@@ -17,15 +18,25 @@ import { cachedProduct } from "../state/productCache";
 import { items as itemsLabel, money } from "../utils/format";
 import { StyleSheet, font, colors, motion, radius, shadow, spacing, type } from "../theme";
 
+const TABS = [
+  { id: "cart", label: "Carrinho", icon: "cart-outline" },
+  { id: "history", label: "Histórico", icon: "history" },
+];
+
 // E4–E7: consulta (CT11), quantidade (CT12), remoção (CT13), subtotais e total calculados pela API.
+// Aba Histórico (CT24/CT25): funciona mesmo com o carrinho vazio, por isso não há retorno antecipado.
 export default function Cart({ navigation }) {
   const insets = useSafeAreaInsets();
   const toast = useToast();
   const { carrinhoId, cart, loading, error, pending, count, refresh, setQuantity, removeItem } = useCart();
   const [removing, setRemoving] = useState(null);
+  const [tab, setTab] = useState("cart");
+  const [historyKey, setHistoryKey] = useState(0);
 
   useFocusEffect(useCallback(() => {
     refresh().catch(() => {});
+    // Ao voltar para a tela (por exemplo, depois de uma compra), o histórico é recarregado.
+    setHistoryKey((key) => key + 1);
   }, [refresh]));
 
   const change = async (item, quantidade) => {
@@ -49,42 +60,41 @@ export default function Cart({ navigation }) {
     }
   };
 
-  if (loading && cart.itens.length === 0 && carrinhoId) {
-    return <View style={[styles.screen, styles.top]}><ListSkeleton rows={3} /></View>;
-  }
+  const hasItems = cart.itens.length > 0;
 
-  if (error && cart.itens.length === 0) {
+  const cartContent = () => {
+    if (loading && !hasItems && carrinhoId) {
+      return <View style={styles.top}><ListSkeleton rows={3} /></View>;
+    }
+    if (error && !hasItems) {
+      return (
+        <View style={styles.center}>
+          <StateView
+            tone={error.offline ? "offline" : "error"}
+            title="Não foi possível carregar o carrinho"
+            message={error.message}
+            actionLabel="Tentar novamente"
+            actionIcon="refresh"
+            onAction={() => refresh().catch(() => {})}
+          />
+        </View>
+      );
+    }
+    if (!hasItems) {
+      return (
+        <View style={styles.center}>
+          <StateView
+            tone="brand"
+            title="Seu carrinho está vazio"
+            message="Escolha produtos no catálogo ou repita uma compra pelo Histórico."
+            actionLabel="Ver produtos"
+            actionIcon="storefront-outline"
+            onAction={() => navigation.navigate("Home")}
+          />
+        </View>
+      );
+    }
     return (
-      <View style={[styles.screen, styles.center]}>
-        <StateView
-          tone={error.offline ? "offline" : "error"}
-          title="Não foi possível carregar o carrinho"
-          message={error.message}
-          actionLabel="Tentar novamente"
-          actionIcon="refresh"
-          onAction={() => refresh().catch(() => {})}
-        />
-      </View>
-    );
-  }
-
-  if (cart.itens.length === 0) {
-    return (
-      <View style={[styles.screen, styles.center]}>
-        <StateView
-          tone="brand"
-          title="Seu carrinho está vazio"
-          message="Escolha produtos no catálogo para montar sua compra."
-          actionLabel="Ver produtos"
-          actionIcon="storefront-outline"
-          onAction={() => navigation.navigate("Home")}
-        />
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.screen}>
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 170 + insets.bottom }]}>
         <Text style={type.small}>{itemsLabel(cart.itens.length)} · {count} {count === 1 ? "unidade" : "unidades"}</Text>
         {error ? (
@@ -137,20 +147,53 @@ export default function Cart({ navigation }) {
           );
         })}
       </ScrollView>
+    );
+  };
 
-      <View style={[styles.bar, { paddingBottom: spacing.sm + insets.bottom }]}>
-        <View style={styles.totalRow}>
-          <View>
-            <Text style={type.caption}>TOTAL</Text>
-            <Text style={type.small}>Calculado pelo SAFRA</Text>
-          </View>
-          <Animated.Text key={cart.total} entering={FadeIn.duration(motion.quick)} style={styles.total}
-            accessibilityLabel={`Total ${money(cart.total)}`}>
-            {money(cart.total)}
-          </Animated.Text>
-        </View>
-        <Button title="Continuar compra" icon="arrow-right" onPress={() => navigation.navigate("Summary")} disabled={pending.size > 0} />
+  return (
+    <View style={styles.screen}>
+      <View style={styles.tabs} accessibilityRole="tablist">
+        {TABS.map((item) => {
+          const active = tab === item.id;
+          const label = item.id === "cart" && count > 0 ? `${item.label} (${count > 99 ? "99+" : count})` : item.label;
+          return (
+            <PressableScale
+              key={item.id}
+              onPress={() => setTab(item.id)}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: active }}
+              accessibilityLabel={label}
+              containerStyle={styles.flex}
+              style={[styles.tab, active && styles.tabActive]}
+            >
+              <MaterialCommunityIcons name={item.icon} size={20} color={active ? colors.onAction : colors.primary} />
+              <Text style={[styles.tabLabel, active && styles.tabLabelActive]} maxFontSizeMultiplier={1.3}>{label}</Text>
+            </PressableScale>
+          );
+        })}
       </View>
+
+      <View style={styles.flex}>
+        {tab === "cart" ? cartContent() : (
+          <PurchaseHistory reloadKey={historyKey} onOpenCart={() => setTab("cart")} />
+        )}
+      </View>
+
+      {tab === "cart" && hasItems ? (
+        <View style={[styles.bar, { paddingBottom: spacing.sm + insets.bottom }]}>
+          <View style={styles.totalRow}>
+            <View>
+              <Text style={type.caption}>TOTAL</Text>
+              <Text style={type.small}>Calculado pelo SAFRA</Text>
+            </View>
+            <Animated.Text key={cart.total} entering={FadeIn.duration(motion.quick)} style={styles.total}
+              accessibilityLabel={`Total ${money(cart.total)}`}>
+              {money(cart.total)}
+            </Animated.Text>
+          </View>
+          <Button title="Continuar compra" icon="arrow-right" onPress={() => navigation.navigate("Summary")} disabled={pending.size > 0} />
+        </View>
+      ) : null}
 
       <ConfirmDialog
         visible={!!removing}
@@ -166,10 +209,21 @@ export default function Cart({ navigation }) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  center: { justifyContent: "center" },
+  center: { flex: 1, justifyContent: "center" },
   top: { paddingTop: spacing.md },
   content: { padding: spacing.md, gap: spacing.sm },
   flex: { flex: 1 },
+  tabs: {
+    flexDirection: "row", gap: spacing.xs, marginHorizontal: spacing.md, marginTop: spacing.sm, padding: spacing.xxs,
+    borderRadius: radius.pill, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border,
+  },
+  tab: {
+    minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xxs,
+    paddingHorizontal: spacing.sm, borderRadius: radius.pill,
+  },
+  tabActive: { backgroundColor: colors.primary },
+  tabLabel: { fontSize: 15, fontFamily: font.semibold, color: colors.primary },
+  tabLabelActive: { color: colors.onAction },
   inlineError: { flexDirection: "row", gap: spacing.xs, alignItems: "center", padding: spacing.sm, backgroundColor: colors.accentSoft, borderRadius: radius.md },
   item: {
     flexDirection: "row", gap: spacing.sm, padding: spacing.sm, backgroundColor: colors.surface,

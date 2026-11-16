@@ -111,8 +111,19 @@ export const cartApi = {
     call(api.patch(`/carrinhos/${id(carrinhoId)}/itens/${id(produtoId)}`, { quantidade })),
   removeItem: (carrinhoId, produtoId) => call(api.delete(`/carrinhos/${id(carrinhoId)}/itens/${id(produtoId)}`)),
   summary: (carrinhoId) => call(api.get(`/carrinhos/${id(carrinhoId)}/resumo`)),
-  confirm: (carrinhoId, chaveIdempotencia, metodoPagamento) =>
-    call(api.post(`/carrinhos/${id(carrinhoId)}/confirmacao-demonstrativa`, { chaveIdempotencia, metodoPagamento })),
+  // CT26: o desconto é calculado pelo servidor (serviço Java); o app só envia o código digitado.
+  applyCoupon: (carrinhoId, codigo) => call(api.post(`/carrinhos/${id(carrinhoId)}/cupom`, { codigo })),
+  confirm: (carrinhoId, chaveIdempotencia, metodoPagamento, cupom = null) =>
+    call(api.post(`/carrinhos/${id(carrinhoId)}/confirmacao-demonstrativa`, {
+      chaveIdempotencia, metodoPagamento, ...(cupom ? { cupom } : {}),
+    })),
+};
+
+// CT24 histórico (três últimas compras) e CT25 "Adicionar novamente ao carrinho".
+export const purchaseApi = {
+  history: () => call(api.get("/compras/historico")),
+  repeat: (compraId, carrinhoId) =>
+    call(api.post(`/compras/${id(compraId)}/repetir`, carrinhoId ? { carrinhoId } : {})),
 };
 
 export const authApi = {
@@ -126,6 +137,16 @@ export const authApi = {
   deleteAccount: (senhaAtual) => call(api.delete('/auth/conta', { data: { senhaAtual } })),
   logout: () => call(api.post('/auth/logout')),
 };
+
+// Na web, <Image> não envia cabeçalhos: a foto autenticada é baixada como Blob e exibida por URL local.
+export async function fetchProfilePhotoBlob(version) {
+  if (!hasValidApiUrl || !currentAuthToken) throw new AppError("semConexao", API_ERROR_MESSAGE);
+  const response = await fetch(`${apiUrl}/auth/perfil/foto?v=${encodeURIComponent(String(version || 0))}`, {
+    headers: { Authorization: `Bearer ${currentAuthToken}` },
+  });
+  if (!response.ok) throw new AppError("fotoIndisponivel", "Foto indisponível.", response.status);
+  return response.blob();
+}
 
 export const profilePhotoSource = version => ({
   uri: `${apiUrl}/auth/perfil/foto?v=${encodeURIComponent(String(version || 0))}`,

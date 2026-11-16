@@ -5,6 +5,7 @@ import Brand from "../components/Brand";
 import CartButton, { BadgeCount } from "../components/CartButton";
 import HeaderBack from "../components/HeaderBack";
 import HeaderHome from "../components/HeaderHome";
+import HeaderProfileAvatar from "../components/HeaderProfileAvatar";
 import DrawerContent from "./DrawerContent";
 import { useCart } from "../state/CartContext";
 import { useAuth } from "../state/AuthContext";
@@ -40,6 +41,11 @@ function CartBadge() {
 
 function HeaderActions({ cart = false }) {
   return <View style={styles.headerActions}><HeaderHome />{cart ? <CartButton /> : null}</View>;
+}
+
+// Home: carrinho e, no extremo direito, a foto de perfil.
+function HomeHeaderActions() {
+  return <View style={styles.headerActions}><CartButton /><HeaderProfileAvatar /></View>;
 }
 
 // Nomes das telas existentes preservados; Login/Register formam o fluxo público de autenticação.
@@ -81,7 +87,7 @@ export default function DrawerRoutes() {
       <Drawer.Screen
         name="Home"
         component={Home}
-        options={{ headerTitle: () => <Brand />, title: "Início", drawerLabel: "Início", drawerIcon: icon("home-outline") }}
+        options={{ headerTitle: () => <Brand />, title: "Início", drawerLabel: "Início", drawerIcon: icon("home-outline"), headerRight: () => <HomeHeaderActions /> }}
       />
       <Drawer.Screen
         name="Offers"

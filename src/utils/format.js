@@ -27,3 +27,17 @@ export function capitalize(text) {
   if (!text) return '';
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
+
+export function date(value) {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return '';
+  const pad = n => String(n).padStart(2, '0');
+  return `${pad(parsed.getDate())}/${pad(parsed.getMonth() + 1)}/${parsed.getFullYear()}`;
+}
+
+export function time(value) {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return '';
+  const pad = n => String(n).padStart(2, '0');
+  return `${pad(parsed.getHours())}:${pad(parsed.getMinutes())}`;
+}

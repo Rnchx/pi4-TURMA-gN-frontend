@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
-import { cartApi } from "../services/api";
+import { cartApi, purchaseApi } from "../services/api";
 import { rememberProducts } from "./productCache";
 
 const CartContext = createContext(null);
@@ -20,6 +20,8 @@ export function CartProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [pending, setPending] = useState(() => new Set());
+  // Cupom aplicado no resumo: { cupom, subtotal, desconto, total, mensagem }, sempre como devolvido pelo servidor.
+  const [coupon, setCoupon] = useState(null);
   const idRef = useRef(null);
   const keyRef = useRef(null);
 
@@ -41,6 +43,7 @@ export function CartProvider({ children }) {
     keyRef.current = null;
     setCart(EMPTY);
     setError(null);
+    setCoupon(null);
   }, []);
 
   // CT11: estado completo do carrinho.
@@ -132,14 +135,54 @@ export function CartProvider({ children }) {
   // CT14.
   const summary = useCallback(() => cartApi.summary(idRef.current), []);
 
+  // CT26: valida o código no servidor. Trocar o cupom muda a compra, então gera nova chave de confirmação.
+  const applyCoupon = useCallback(async (codigo) => {
+    const result = await cartApi.applyCoupon(idRef.current, codigo);
+    keyRef.current = null;
+    setCoupon(result);
+    return result;
+  }, []);
+
+  const removeCoupon = useCallback(() => {
+    keyRef.current = null;
+    setCoupon(null);
+  }, []);
+
+  // Reconsulta o cupom (o carrinho pode ter mudado). Se o servidor recusar, o cupom sai e o erro volta.
+  const revalidateCoupon = useCallback(async (current) => {
+    if (!current) return null;
+    try {
+      const result = await cartApi.applyCoupon(idRef.current, current.cupom);
+      setCoupon(result);
+      return result;
+    } catch (err) {
+      if (!err.offline) { keyRef.current = null; setCoupon(null); }
+      throw err;
+    }
+  }, []);
+
   // CT15: a mesma chave é usada em todas as tentativas desta compra, evitando duplicidade.
-  const confirm = useCallback(async (metodoPagamento) => {
+  // O cupom é só o código: o servidor revalida e calcula desconto e total na confirmação.
+  const confirm = useCallback(async (metodoPagamento, cupom = null) => {
     const id = idRef.current;
     keyRef.current ??= newCheckoutKey();
-    const result = await cartApi.confirm(id, keyRef.current, metodoPagamento);
+    const result = await cartApi.confirm(id, keyRef.current, metodoPagamento, cupom);
     reset();
     return result;
   }, [reset]);
+
+  // CT25: itens de uma compra anterior com preços atuais. Atualiza carrinho e contador imediatamente.
+  const repeatPurchase = useCallback(async (compraId) => {
+    const result = await purchaseApi.repeat(compraId, idRef.current);
+    if (result.carrinhoId) {
+      applyCartId(result.carrinhoId);
+      keyRef.current = null;
+      const data = await cartApi.get(result.carrinhoId).catch(() => null);
+      if (data) setCart(data);
+      setError(null);
+    }
+    return result;
+  }, []);
 
   const value = useMemo(() => ({
     carrinhoId,
@@ -153,9 +196,15 @@ export function CartProvider({ children }) {
     setQuantity,
     removeItem,
     summary,
+    coupon,
+    applyCoupon,
+    removeCoupon,
+    revalidateCoupon,
     confirm,
+    repeatPurchase,
     reset,
-  }), [carrinhoId, cart, loading, error, pending, refresh, addItem, setQuantity, removeItem, summary, confirm, reset]);
+  }), [carrinhoId, cart, loading, error, pending, refresh, addItem, setQuantity, removeItem, summary, coupon, applyCoupon,
+    removeCoupon, revalidateCoupon, confirm, repeatPurchase, reset]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

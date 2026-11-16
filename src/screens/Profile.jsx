@@ -4,12 +4,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { PROFILE_PHOTO_ORIGINAL_MAX_BYTES } from "../services/profile-image";
 import Button from "../components/ui/Button";
-import { profilePhotoSource } from "../services/api";
+import { useProfilePhotoSource } from "../state/useProfilePhotoSource";
 import { useAuth } from "../state/AuthContext";
 import { StyleSheet, colors, radius, shadow, spacing, type } from "../theme";
 
 export default function Profile({ navigation }) {
   const { usuario, photoVersion, removePhoto, logout } = useAuth();
+  const photoSource = useProfilePhotoSource(photoVersion, Boolean(usuario?.fotoPerfil));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
@@ -44,8 +45,8 @@ export default function Profile({ navigation }) {
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <View style={styles.card}>
         <View style={styles.avatar}>
-          {usuario?.fotoPerfil
-            ? <Image source={profilePhotoSource(photoVersion)} style={styles.photo} accessibilityLabel="Foto de perfil" />
+          {usuario?.fotoPerfil && photoSource
+            ? <Image source={photoSource} style={styles.photo} resizeMode="cover" accessibilityLabel="Foto de perfil" />
             : <MaterialCommunityIcons name="account" size={52} color={colors.onPrimary} />}
         </View>
         <Text style={type.title}>{usuario?.nome}</Text>

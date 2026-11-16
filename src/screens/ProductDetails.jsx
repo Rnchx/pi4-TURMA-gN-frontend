@@ -138,7 +138,7 @@ export default function ProductDetails({ navigation, route }) {
             </View>
             {product.idadeMinima === 18 ? <View style={styles.ageNotice}>
               <MaterialCommunityIcons name="alert-circle-outline" size={20} color={colors.danger} />
-              <Text style={[type.small, styles.flex]}>Produto demonstrativo 18+. A idade é calculada pelo servidor a partir da data de nascimento cadastrada.</Text>
+              <Text style={[type.smallStrong, styles.flex]}>Produto +18</Text>
             </View> : null}
             <View style={styles.notice}>
               <MaterialCommunityIcons name="shield-check-outline" size={20} color={colors.primary} />

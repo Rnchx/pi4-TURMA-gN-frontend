@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -11,28 +11,53 @@ import { money } from "../utils/format";
 import { paymentLabel } from "./Payment";
 import { StyleSheet, colors, radius, shadow, spacing, type } from "../theme";
 
+const COUPON_ERRORS = new Set(["cupomInvalido", "cupomIndisponivel", "cupomJaUtilizado", "cupomExpirado"]);
+
 export default function Review({ navigation, route }) {
   const metodo = route.params?.metodoPagamento;
   const { usuario } = useAuth();
-  const { summary, confirm } = useCart();
+  const { summary, confirm, coupon, revalidateCoupon, removeCoupon } = useCart();
   const [state, setState] = useState({ loading: true, data: null, error: null });
+  const [couponNotice, setCouponNotice] = useState(null);
   const [busy, setBusy] = useState(false);
   const [confirmError, setConfirmError] = useState(null);
+  const couponRef = useRef(coupon);
+  useEffect(() => { couponRef.current = coupon; }, [coupon]);
+
+  // Resumo e cupom são relidos do servidor ao abrir a revisão; nada é calculado no aplicativo.
   const load = useCallback(async () => {
-    try { setState({ loading: true, data: null, error: null }); setState({ loading: false, data: await summary(), error: null }); }
-    catch (error) { setState({ loading: false, data: null, error }); }
-  }, [summary]);
+    setCouponNotice(null);
+    try {
+      setState({ loading: true, data: null, error: null });
+      const data = await summary();
+      if (couponRef.current) {
+        try { await revalidateCoupon(couponRef.current); }
+        catch (error) { setCouponNotice(`O cupom foi removido: ${error.message}`); }
+      }
+      setState({ loading: false, data, error: null });
+    } catch (error) { setState({ loading: false, data: null, error }); }
+  }, [summary, revalidateCoupon]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const submit = async () => {
     if (busy || !metodo || !state.data?.podeConfirmar) return;
     setBusy(true); setConfirmError(null);
-    try { navigation.navigate("Confirmation", { compra: await confirm(metodo) }); }
-    catch (error) { setConfirmError(error); } finally { setBusy(false); }
+    try { navigation.navigate("Confirmation", { compra: await confirm(metodo, coupon?.cupom ?? null) }); }
+    catch (error) {
+      // Recusa do cupom na confirmação: o cupom sai e a pessoa pode confirmar sem ele.
+      if (COUPON_ERRORS.has(error.codigo)) {
+        removeCoupon();
+        setCouponNotice(`O cupom foi removido: ${error.message}`);
+      } else {
+        setConfirmError(error);
+      }
+    } finally { setBusy(false); }
   };
 
   if (state.loading) return <View style={styles.screen}><ListSkeleton rows={3} /></View>;
   if (state.error || !state.data) return <View style={[styles.screen, styles.center]}><StateView title="Não foi possível revisar" message={state.error?.message} actionLabel="Tentar novamente" onAction={load} /></View>;
+  const subtotal = coupon ? coupon.subtotal : state.data.total;
+  const total = coupon ? coupon.total : state.data.total;
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -40,8 +65,14 @@ export default function Review({ navigation, route }) {
         <View style={styles.card}>
           <Text style={type.heading}>Itens</Text>
           {state.data.itens.map(item => <View key={item.produtoId} style={styles.row}><Text style={[type.body, styles.flex]}>{item.quantidade} × {item.nome}</Text><Text style={type.bodyStrong}>{money(item.subtotal)}</Text></View>)}
-          <View style={styles.row}><Text style={type.heading}>Total</Text><Text style={type.title}>{money(state.data.total)}</Text></View>
+          <View style={styles.row}><Text style={type.body}>Subtotal</Text><Text style={type.bodyStrong}>{money(subtotal)}</Text></View>
+          <View style={styles.row}>
+            <Text style={type.body}>{coupon ? `Cupom ${coupon.cupom}` : "Cupom"}</Text>
+            <Text style={[type.bodyStrong, coupon && styles.discount]}>{coupon ? `− ${money(coupon.desconto)}` : "Nenhum cupom"}</Text>
+          </View>
+          <View style={[styles.row, styles.last]}><Text style={type.heading}>Total final</Text><Text style={type.title}>{money(total)}</Text></View>
         </View>
+        {couponNotice ? <Text style={styles.warning} accessibilityRole="alert">{couponNotice}</Text> : null}
         <View style={styles.card}><Text style={type.heading}>Método demonstrativo</Text><Text style={type.body}>{paymentLabel(metodo)}</Text></View>
         <View style={styles.notice}><MaterialCommunityIcons name="school-outline" size={22} color={colors.primary} /><Text style={[type.small, styles.flex]}>Simulação acadêmica. Nenhuma cobrança será realizada.</Text></View>
         {confirmError ? <Text style={styles.error} accessibilityRole="alert">{confirmError.message} Você pode tentar novamente com segurança.</Text> : null}
@@ -55,7 +86,10 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background }, center: { justifyContent: "center" }, content: { padding: spacing.md, gap: spacing.sm, paddingBottom: 110 },
   card: { padding: spacing.md, gap: spacing.xs, backgroundColor: colors.surface, borderRadius: radius.lg, ...shadow.card },
   row: { flexDirection: "row", justifyContent: "space-between", gap: spacing.sm, paddingVertical: spacing.xs, borderBottomWidth: 1, borderBottomColor: colors.border },
+  last: { borderBottomWidth: 0 },
+  discount: { color: colors.success },
   flex: { flex: 1 }, notice: { flexDirection: "row", gap: spacing.xs, padding: spacing.md, borderRadius: radius.lg, backgroundColor: colors.primarySoft },
+  warning: { ...type.small, color: colors.ink, backgroundColor: colors.accentSoft, padding: spacing.sm, borderRadius: radius.md },
   error: { ...type.small, color: colors.danger, backgroundColor: colors.dangerSoft, padding: spacing.sm, borderRadius: radius.md },
   bottom: { position: "absolute", left: 0, right: 0, bottom: 0, padding: spacing.md, backgroundColor: colors.surface, ...shadow.bar },
 });
